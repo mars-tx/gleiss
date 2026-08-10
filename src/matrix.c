@@ -14,7 +14,7 @@ void mat_print(mat4* mat){
 
 //TODO:Quarternions implement
 //Using rot vec gives gimbal
-void buildModelMatrix(object* obj){
+void buildModelMatrix(Object* obj){
 
    mat4 model_mat={0};
    vec3 pos= obj->pos;
@@ -38,7 +38,7 @@ void buildModelMatrix(object* obj){
 /*LOOKAT matrix wont work if camera is pointing straight up or down
 For that its better to switch to global_z or Quaternions*/
 
-void buildViewLookAtMatrix(camera* cam){
+void buildViewLookAtMatrix(Camera* cam){
 
    mat4 view_mat={0};
    vec3 cam_pos= cam->cam_pos;
@@ -83,7 +83,7 @@ void buildViewLookAtMatrix(camera* cam){
 }
 
 //no w use yet but still have it
-void buildProjectionMatrix(camera* cam){
+void buildProjectionMatrix(Camera* cam){
 
    mat4 proj_mat={0};
    float oot= 1.0/tanf(FOV_ANGLE_Y/2.0f);

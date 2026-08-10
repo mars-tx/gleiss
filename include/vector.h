@@ -4,7 +4,7 @@
 #include "include/obj.h"
 
 typedef struct{
-    int x,y;
+    int u,v;
 }vec2;
 
 typedef struct{

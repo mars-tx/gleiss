@@ -112,55 +112,25 @@ int main(){
 }
 
 
-int render_static_object(object* obj,uint32_t vrtx_color,shademode mode){
+int render_StaticObject(Object* obj,uint32_t vrtx_color,Shademode mode){
 
-    create_model_mat(obj);
-    mesh* mes= obj->mesh_data;
-    int fc_count= mes->face_count;
-    int vx_count= mes->vx_count;
-    face* fc= mes->faces;
-    vertex* v_all= mes->vx_all;
+    Mesh* mesh= obj->meshData;
     //if dynamic obj then vtrans calloc
-    vertex* v_trans= obj->vx_trans;
+    VertexInput* vTrans= obj->verticesTransformed;
 
-    mat4 pvm;
-    mat_mult_mat(&projview,&obj->model,&pvm); 
-    //-z to z
-    //initializing will fill vtrans 
-    //then would just have to use vtrans with projview
-    for(int k= 0;k< vx_count;k++){
-        v_trans[k].pos= mat_mult_vec(&pvm,v_all[k].pos);
-        v_trans[k].norm= normalize(mat_mult_vec(&pvm,v_all[k].norm));
-    }
+    //setMeshVerticesNormal(mesh);
+
+    mat4 PVM;
+    buildModelMatrix(obj);
+    MatMultMat(&projview,&obj->model,&PVM); 
+
 
     uint32_t face_color[3]={0x00ff00ff,0xffff00ff,0xff0000ff};
-    //ittr thru each face
-    for(int i= 0;i< fc_count;i++){            
-        int* curr_vx= fc[i].vx_index;
-        vec3 vertices[3];
-        //NO QUADS
-        for(int j= 0;j< 3;j++){
-            vec3 pnt= v_trans[curr_vx[j]].pos;
 
-            float z= pnt.z;
-            if (z>Z_NEAR && z<Z_FAR){ 
-                float ooz= 1.0f/z;
-                int x_screen= (int)((pnt.x*ooz+1.0f)/2.0f*WIDTH);
-                int y_screen= (int)((-pnt.y*ooz+1.0f)/2.0f*HEIGHT);
-                printf("screen: %d %d ndc: %f %f\n",x_screen,y_screen,pnt.x*ooz,pnt.y*ooz);
-
-                vertices[j].x= pnt.x;
-                vertices[j].y= pnt.y;
-                vertices[j].z= pnt.z;
-            }
-            else {continue;}
-        }
-
-        printf("=============\n");
-        barycentric(vertices,face_color[i],SHADE_FLAT);
-        printf("=============\n");
-        //scanline_rasterize(pnts,face_color[i+1],face_color[i+2]);
-    }
+    printf("=============\n");
+    //barycentric(vertices,face_color[i],SHADE_FLAT);
+    printf("=============\n");
+    //scanline_rasterize(pnts,face_color[i+1],face_color[i+2]);
 }
 
 void clean_buffer(){
