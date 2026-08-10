@@ -1,0 +1,53 @@
+#ifndef VECTOR_H
+#define VECTOR_H
+
+#include "include/obj.h"
+
+typedef struct{
+    int x,y;
+}vec2;
+
+typedef struct{
+    float x,y,z;
+}vec3;
+
+typedef struct{
+    float x,y,x,w;
+}vec4;
+
+static inline vec3 vec3Sub(vec3 v1,vec3 v2){
+    vec3 out;
+    out.x= v1.x - v2.x; out.y= v1.y - v2.y; out.z= v1.z - v2.z;
+    return out;
+}
+
+static inline int vec3Dot(vec3 v1,vec3 v2){
+
+    int res= v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+    return res;
+}
+
+static inline vec3 vec3Cross(vec3 v1,vec3 v2){
+
+    vec3 out;
+    out.x= v1.y*v2.z - v1.z*v2.y;
+    out.y= -v1.x*v2.z + v1.z*v2.x;
+    out.z= v1.x*v2.y - v1.y*v2.x;
+    return out;
+}
+
+static inline vec3 vec3Normalize(vec3 v){
+
+    printf("%f %f %f\n",v.x,v.y,v.z);
+    float magn= sqrtf(vec3Dot(v,v));
+    if (magn > 0.0001f){
+        magn= (1.0f/magn);
+        v.x*=magn;
+        v.y*=magn;
+        v.z*=magn;
+    }
+    printf("%f %f %f %f\n",magn,v.x,v.y,v.z);
+    return v;
+}
+
+#endif
