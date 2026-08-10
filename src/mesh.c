@@ -3,7 +3,7 @@
 #include "include/shader.h"
 #include "include/vector.h"
 
-void setMeshVerticesNormal(Mesh* inMesh){
+void set_mesh_vertices_normal(Mesh* inMesh){
 
     int num= inMesh->vertexCount;
     VertexInput* vertices= inMesh->vertices;
@@ -13,7 +13,7 @@ void setMeshVerticesNormal(Mesh* inMesh){
     }
 }
 
-void setMeshFacesNormal(Mesh* inMesh){
+void set_mesh_faces_normal(Mesh* inMesh){
 
     int num= inMesh->faceCount;
     VertexInput* vertices= inMesh->vertices;
@@ -27,6 +27,6 @@ void setMeshFacesNormal(Mesh* inMesh){
         vec3 n1= vec3Sub(v2,v1);
         vec3 n2= vec3Sub(v3,v1);
 
-        faces[i].norm= vec3Normalize(vec3Cross(n1,n2));
+        faces[i].faceNorm= vec3Normalize(vec3Cross(n1,n2));
     }
 }

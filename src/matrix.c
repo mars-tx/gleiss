@@ -14,7 +14,7 @@ void mat_print(mat4* mat){
 
 //TODO:Quarternions implement
 //Using rot vec gives gimbal
-void buildModelMatrix(Object* obj){
+void build_ModelMatrix(Object* obj){
 
    mat4 model_mat={0};
    vec3 pos= obj->pos;
@@ -38,7 +38,7 @@ void buildModelMatrix(Object* obj){
 /*LOOKAT matrix wont work if camera is pointing straight up or down
 For that its better to switch to global_z or Quaternions*/
 
-void buildViewLookAtMatrix(Camera* cam){
+void build_ViewLookAtMatrix(Camera* cam){
 
    mat4 view_mat={0};
    vec3 cam_pos= cam->cam_pos;
@@ -83,24 +83,24 @@ void buildViewLookAtMatrix(Camera* cam){
 }
 
 //no w use yet but still have it
-void buildProjectionMatrix(Camera* cam){
+void build_ProjectionMatrix(Camera* cam){
 
-   mat4 proj_mat={0};
+   mat4 projMat={0};
    float oot= 1.0/tanf(FOV_ANGLE_Y/2.0f);
    float aspect= (float)WIDTH/HEIGHT;
 
-   proj_mat.m[0][0]= oot* 1.0f/aspect;
-   proj_mat.m[1][1]= oot;
-   proj_mat.m[2][2]= 1.0f;
+   projMat.m[0][0]= oot* 1.0f/aspect;
+   projMat.m[1][1]= oot;
+   projMat.m[2][2]= 1.0f;
 
-   proj_mat.m[3][2]= 1.0f;
+   projMat.m[3][2]= 1.0f;
 
-   cam->projection= proj_mat;
-   //printf("PROJJ\n");mat_print(proj_mat);
+   cam->projection= projMat;
+   //printf("PROJJ\n");mat_print(projMat);
    return;
 }
 
-vec3 MatMultVec(mat4* matrix,vec3 vec){
+vec3 mat_mult_vec(mat4* matrix,vec3 vec){
 
    vec3 result={0};
 
@@ -112,7 +112,7 @@ vec3 MatMultVec(mat4* matrix,vec3 vec){
    return result;
 }
 
-void MatMultMat(mat4* a,mat4* b,mat4* out){
+void mat_mult_mat(mat4* a,mat4* b,mat4* out){
 
    for (int r= 0;r< 4;r++){
       for(int c= 0;c< 4;c++){

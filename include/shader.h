@@ -21,6 +21,7 @@ typedef struct{
     //Per object
     mat4* PVM;
     mat4* M;
+    mat4* N;
 
     vec3 lightDir;
     //Per face vertices
@@ -46,5 +47,8 @@ typedef struct{
     vec2 texture;
 
 }VertexOutput;
+
+void vertex_FlatShader(VertexInput* inVertices,VertexOutput* outVertices,FlatShader* shader,int vertexCount);
+void vertex_GoraudShader(VertexInput* inVertices,VertexOutput* outVertices,GouraudShader* shader,int vertexCount);
 
 #endif

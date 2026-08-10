@@ -4,7 +4,10 @@
 #include "include/main.h"
 #include "include/shader.h"
 
-void draw_triangle_barycentric(VertexOutput* vertices,uint32_t basecolor,Shademode mode){
+void draw_triangle_barycentric(VertexOutput* vertices,void* shader,uint32_t basecolor,Shademode mode){
+
+    if (mode== SHADE_FLAT){shader= (FlatShader*)shader;}
+    else if (mode== SHADE_GOURAUD){shader= (GouraudShader*)shader;}
 
     vec3 v1= vertices[0].clip_pos;
     vec3 v2= vertices[1].clip_pos;
@@ -49,7 +52,7 @@ void draw_triangle_barycentric(VertexOutput* vertices,uint32_t basecolor,Shademo
                     loc= ys* WIDTH+ xs;
                     if(z_inv_pixel> z_buffer[loc]){
                         z_buffer[loc]= z_inv_pixel;
-                        fragment_FlatShader();
+                        //fragment_Shader(shader,u1,u2);
                         pixels[loc]= basecolor;
                     }
                 }

@@ -112,23 +112,87 @@ int main(){
 }
 
 
-int render_StaticObject(Object* obj,uint32_t vrtx_color,Shademode mode){
+bool render_StaticObjectFlat(Object* obj,vec3 lightDir){
 
     Mesh* mesh= obj->meshData;
     //if dynamic obj then vtrans calloc
-    VertexInput* vTrans= obj->verticesTransformed;
+    VertexOutput* vTrans= obj->verticesTransformed;
 
     //setMeshVerticesNormal(mesh);
 
     mat4 PVM;
-    buildModelMatrix(obj);
-    MatMultMat(&projview,&obj->model,&PVM); 
+    build_ModelMatrix(obj);
+    mat_mult_mat(&projview,&obj->model,&PVM); 
 
+    //Vertex shader
+    FlatShader* shader;
+    shader->lightDir= lightDir;
+    shader->M= &obj->model;  //could be MV
+    shader->PVM= &PVM;
+    vertex_FlatShader(mesh->vertices,vTrans,shader,mesh->vertexCount);
 
-    uint32_t face_color[3]={0x00ff00ff,0xffff00ff,0xff0000ff};
+    int num= mesh->faceCount;
+    Face* faces= mesh->faces;
+    VertexOutput* faceVertices= malloc(sizeof(VertexOutput)*3);
+    for (int i= 0;i< num;i++){
 
-    printf("=============\n");
-    //barycentric(vertices,face_color[i],SHADE_FLAT);
+        faceVertices[0]= vTrans[faces[i].verticesIndex[0]];
+        faceVertices[1]= vTrans[faces[i].verticesIndex[1]];
+        faceVertices[2]= vTrans[faces[i].verticesIndex[2]];
+
+        vec3 v1= vTrans[faces[i].verticesIndex[0]].world_pos;
+        vec3 v2= vTrans[faces[i].verticesIndex[1]].world_pos;
+        vec3 v3= vTrans[faces[i].verticesIndex[2]].world_pos;
+
+        vec3 e1= vec3Sub(v2,v1);
+        vec3 e2= vec3Sub(v3,v1);
+
+        shader->faceNorm= vec3Normalize(vec3Cross(e1,e2));
+        shader->i= vec3Dot(shader->faceNorm,shader->lightDir);
+
+        draw_triangles_barycentric(faceVertices,shader,SHADE_FLAT);
+    }
+}
+
+bool render_StaticObjectGouraud(Object* obj){
+
+    Mesh* mesh= obj->meshData;
+    //if dynamic obj then vtrans calloc
+    VertexOutput* vTrans= obj->verticesTransformed;
+
+    //setMeshVerticesNormal(mesh);
+
+    mat4 PVM;
+    build_ModelMatrix(obj);
+    mat_mult_mat(&projview,&obj->model,&PVM); 
+
+    //Vertex shader
+    GouraudShader* shader;
+    shader->M= &obj->model;
+    shader->PVM= &PVM;
+    //TODO: normal matrix
+    vertex_GouraudShader(mesh->vertices,vTrans,shader,mesh->vertexCount);
+
+    int num= mesh->faceCount;
+    Face* faces= mesh->faces;
+    VertexOutput* faceVertices= malloc(sizeof(VertexOutput)*3);
+    for (int i= 0;i< num;i++){
+
+        faceVertices[0]= vTrans[faces[i].verticesIndex[0]];
+        faceVertices[1]= vTrans[faces[i].verticesIndex[1]];
+        faceVertices[2]= vTrans[faces[i].verticesIndex[2]];
+
+        vec3 n1= vec3Normalize(faceVertices[0].world_pos);
+        vec3 n2= vec3Normalize(faceVertices[1].world_pos);
+        vec3 n3= vec3Normalize(faceVertices[2].world_pos);
+
+        shader->i1= vec3Dot(n1,shader->lightDir);
+        shader->i2= vec3Dot(n2,shader->lightDir);
+        shader->i3= vec3Dot(n3,shader->lightDir);
+
+        draw_triangles_barycentric(faceVertices,shader,SHADE_GOURAUD);
+    }
+
     printf("=============\n");
     //scanline_rasterize(pnts,face_color[i+1],face_color[i+2]);
 }
