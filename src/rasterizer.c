@@ -4,18 +4,34 @@
 #include "include/main.h"
 #include "include/shader.h"
 
-void draw_triangle_barycentric(VertexOutput* vertices,void* shader,uint32_t basecolor,Shademode mode){
+void rasterize_barycentricFlat(VertexOutput* vertices,FlatShader* shader){
 
-    if (mode== SHADE_FLAT){shader= (FlatShader*)shader;}
-    else if (mode== SHADE_GOURAUD){shader= (GouraudShader*)shader;}
+    //Setting values for interp
+    vec3 v1= vertices[0].worldPos;
+    vec3 v2= vertices[1].worldPos;
+    vec3 v3= vertices[2].worldPos;
 
-    vec3 v1= vertices[0].clip_pos;
-    vec3 v2= vertices[1].clip_pos;
-    vec3 v3= vertices[2].clip_pos;
+    vec3 e1= vec3Sub(v2,v1);
+    vec3 e2= vec3Sub(v3,v1);
+    shader->faceNorm= vec3Normalize(vec3Cross(e1,e2));
+
+    float diffuse= vec3Dot(shader->faceNorm,shader->lightDir);
+    shader->intensity= MAX(0.2f,MIN(diffuse,1));
+
+    //Color between 0-1
+    Color vcolor1= vertices[0].vertexColor;
+    Color vcolor2= vertices[1].vertexColor;
+    Color vcolor3= vertices[2].vertexColor;
+
+    uint32_t flatColor= fragment_FlatShader(shader,vcolor1,vcolor2,vcolor3);
+
+    //Clip space to screen space
+    vec3 v1= vertices[0].clipPos;
+    vec3 v2= vertices[1].clipPos;
+    vec3 v3= vertices[2].clipPos;
 
     vec3 z_inv= {1.0f/v1.z,1.0f/v2.z,1.0f/v3.z};
 
-    //Clip space to screen space
     v1.x*= z_inv.x; v2.x*= z_inv.y; v3.x*= z_inv.z;
     v1.y*= z_inv.x; v2.y*= z_inv.y; v3.y*= z_inv.z;
     
@@ -24,7 +40,73 @@ void draw_triangle_barycentric(VertexOutput* vertices,void* shader,uint32_t base
 
     int x13= x1 - x3,x23= x2 - x3;
     int y13= y1 - y3,y23= y2 - y3;
-    float det= (x13* y23 - x23* y13);
+    float det= (x13*y23 - x23*y13);
+    //if(det>= 0){return;}
+    det= 1.0f/det;
+    float c1= y23*det, c2= -y13*det;
+    float r1= -x23*det, r2= x13*det;
+
+    //Boundaries for rasterizer
+    int xmax,xmin,ymax,ymin;
+    bounding_box(x1,y1,x2,y2,x3,y3,&xmin,&xmax,&ymin,&ymax);
+    int xs3= xmin - x3, ys3= ymin - x3;
+
+    float a= det*(y23*xs3 - x23*ys3);
+    float b= det*(-y13*xs3 + x13*ys3);
+    float u1,u2,u3,z_inv_pixel;
+    int loc;
+    for (int ys= ymin;ys<= ymax;ys++){
+        for (int xs= xmin;xs<= xmax;xs++){
+
+            u3= 1-u1-u2;
+            if(u1>= 0 && u2>= 0 && u3>= 0){
+                //Interpolating z
+                z_inv_pixel= z_inv.x*u1 + z_inv.y*u2 + z_inv.z*u3;
+                loc= ys*WIDTH + xs;
+                if(z_inv_pixel> z_buffer[loc]){
+                    z_buffer[loc]= z_inv_pixel;
+                    pixels[loc]= flatColor;
+                }
+            }
+            u1+= c1;
+            u2+= c2;
+        }
+    u1= a;
+    u2= b;
+    u1+= r1;
+    u2+= r2;
+    r1+= r1;r2+= r2;
+    }
+}
+
+void rasterize_barycentricGouraud(VertexOutput* vertices,GouraudShader* shader){
+
+    //Setting values for interp
+    shader->i1= vec3Dot(vertices[0].norm,shader->lightDir);
+    shader->i2= vec3Dot(vertices[1].norm,shader->lightDir);
+    shader->i3= vec3Dot(vertices[2].norm,shader->lightDir);
+
+    //Color between 0-1
+    Color vcolor1= vertices[0].vertexColor;
+    Color vcolor2= vertices[1].vertexColor;
+    Color vcolor3= vertices[2].vertexColor;
+
+    //Clip space to screen space
+    vec3 v1= vertices[0].clipPos;
+    vec3 v2= vertices[1].clipPos;
+    vec3 v3= vertices[2].clipPos;
+
+    vec3 z_inv= {1.0f/v1.z,1.0f/v2.z,1.0f/v3.z};
+
+    v1.x*= z_inv.x; v2.x*= z_inv.y; v3.x*= z_inv.z;
+    v1.y*= z_inv.x; v2.y*= z_inv.y; v3.y*= z_inv.z;
+    
+    int x1= screen_x(v1.x),x2= screen_x(v2.x),x3= screen_x(v3.x);
+    int y1= screen_y(v1.y),y2= screen_y(v2.y),y3= screen_y(v3.y);
+
+    int x13= x1 - x3,x23= x2 - x3;
+    int y13= y1 - y3,y23= y2 - y3;
+    float det= (x13*y23 - x23*y13);
     //if(det>= 0){return;}
     det= 1.0f/det;
     float c1= y23*det, c2= -y13*det;
@@ -36,35 +118,35 @@ void draw_triangle_barycentric(VertexOutput* vertices,void* shader,uint32_t base
     int xs3= xmin - x3, ys3= ymin - x3;
 
     float u1,u2,u3,z_inv_pixel;
-    if (mode == SHADE_FLAT){
-        //basecolor= (basecolor & 0xffffff00) | (int)((basecolor & 0x000000ff)* i);
+    float a= det*(y23*xs3 - x23*ys3);
+    float b= det*(-y13*xs3 + x13*ys3);
+    int loc;
+    for (int ys= ymin;ys<= ymax;ys++){
+        for (int xs= xmin;xs<= xmax;xs++){
 
-        float a= det*(y23*xs3 - x23*ys3);
-        float b= det*(-y13*xs3 + x13*ys3);
-        int loc;
-        for (int ys= ymin;ys<= ymax;ys++){
-            for (int xs= xmin;xs<= xmax;xs++){
+            u3= 1-u1-u2;
+            if(u1>= 0 && u2>= 0 && u3>= 0){
+                //Interpolating z
+                z_inv_pixel= z_inv.x*u1 + z_inv.y*u2 + z_inv.z*u3;
+                loc= ys*WIDTH + xs;
+                if(z_inv_pixel> z_buffer[loc]){
+                    z_buffer[loc]= z_inv_pixel;
 
-                u3= 1-u1-u2;
-                if(u1>= 0 && u2>= 0 && u3>= 0){
-                    //Interpolating z
-                    z_inv_pixel= z_inv.x* u1+ z_inv.y* u2+ z_inv.z* u3;
-                    loc= ys* WIDTH+ xs;
-                    if(z_inv_pixel> z_buffer[loc]){
-                        z_buffer[loc]= z_inv_pixel;
-                        //fragment_Shader(shader,u1,u2);
-                        pixels[loc]= basecolor;
-                    }
+                    Color interp;
+                    interp.r= ((vcolor1.r - vcolor3.r)*u1 + (vcolor2.r - vcolor3.r)*u2 + vcolor3.r);
+                    interp.g= ((vcolor1.g - vcolor3.g)*u1 + (vcolor2.g - vcolor3.g)*u2 + vcolor3.g);
+                    interp.b= ((vcolor1.b - vcolor3.b)*u1 + (vcolor2.b - vcolor3.b)*u2 + vcolor3.b);
+                    pixels[loc]= fragment_GouraudShader(shader,interp,u1,u2);
                 }
-                u1+= c1;
-                u2+= c2;
             }
-        u1= a;
-        u2= b;
-        u1+= r1;
-        u2+= r2;
-        r1+= r1;r2+= r2;
+            u1+= c1;
+            u2+= c2;
         }
+    u1= a;
+    u2= b;
+    u1+= r1;
+    u2+= r2;
+    r1+= r1;r2+= r2;
     }
 }
 
@@ -260,7 +342,6 @@ better to draw a line instead with frontmost z*/
 void set_pixel(int x,int y,float ooz,uint32_t* color){
         int loc= y*WIDTH+x;
         if (ooz> z_buffer[loc]){
-            printf("pixel %d\n",loc);
             pixels[loc]= *color;
             z_buffer[loc]= ooz;
         }
