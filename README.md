@@ -24,20 +24,16 @@ This project implements a complete, customizable 3D graphics pipeline entirely o
 ## Pipeline Overview
 
 [ Mesh Data ]
-│
+
 ▼
 1. Vertex Shader Pass ─────► Transforms positions (MVP Matrix) & computes per-vertex attributes.
-│
-▼
+
 2. Primitive Assembly ─────► Groups transformed vertices into 3-vertex faces.
-│
-▼
+
 3. Barycentric Rasterizer ──► Calculates bounding boxes, interpolates Z-depth and barycentric weights.
-│
-▼
+
 4. Fragment Shader Pass ───► Calculates final RGB color and writes to RGBA framebuffer after Depth Test.
-│
-▼
+
 SDL3 Texture Update ──────► Flushes CPU pixel array onto screen.## Getting Started
 
 ### Prerequisites
@@ -51,7 +47,7 @@ SDL3 Texture Update ──────► Flushes CPU pixel array onto screen.##
 
 ```bash
 # Clone the repository
-git clone [https://github.com/mars-tx/gleiss.git](https://github.com/mars-tx/gleiss.git)
+git clone https://github.com/mars-tx/gleiss.git
 cd gleiss
 
 # Compile the project
