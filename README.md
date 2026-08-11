@@ -47,7 +47,7 @@ SDL3 Texture Update ──────► Flushes CPU pixel array onto screen.##
 
 ```bash
 # Clone the repository
-git clone [https://github.com/mars-tx/gleiss.git](https://github.com/mars-tx/gleiss.git)
+git clone https://github.com/mars-tx/gleiss.git
 cd gleiss
 
 # Compile the project
