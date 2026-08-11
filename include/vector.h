@@ -38,7 +38,6 @@ static inline vec3 vec3Cross(vec3 v1,vec3 v2){
 
 static inline vec3 vec3Normalize(vec3 v){
 
-    printf("%f %f %f\n",v.x,v.y,v.z);
     float magn= sqrtf(vec3Dot(v,v));
     if (magn > 0.0001f){
         magn= (1.0f/magn);
@@ -46,7 +45,6 @@ static inline vec3 vec3Normalize(vec3 v){
         v.y*=magn;
         v.z*=magn;
     }
-    printf("%f %f %f %f\n",magn,v.x,v.y,v.z);
     return v;
 }
 

@@ -55,4 +55,11 @@ typedef struct{
 
 }Camera;
 
+typedef struct{
+    uint32_t* pixels;
+    float* z_buffer;
+    int Width,Height;
+
+}Framebuffer;
+
 #endif
