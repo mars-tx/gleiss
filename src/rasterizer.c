@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include "math.h"
-#include "include/obj.h"
 #include "include/main.h"
+#include "include/vector.h"
+#include "include/obj.h"
 #include "include/shader.h"
 
 void rasterize_barycentricFlat(VertexOutput* vertices,FlatShader* shader){
