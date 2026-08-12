@@ -11,17 +11,13 @@ typedef struct{
     float x,y,z;
 }vec3;
 
-typedef struct{
-    float x,y,x,w;
-}vec4;
-
 static inline vec3 vec3Sub(vec3 v1,vec3 v2){
     vec3 out;
     out.x= v1.x - v2.x; out.y= v1.y - v2.y; out.z= v1.z - v2.z;
     return out;
 }
 
-static inline int vec3Dot(vec3 v1,vec3 v2){
+static inline float vec3Dot(vec3 v1,vec3 v2){
 
     int res= v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
     return res;

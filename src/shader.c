@@ -44,7 +44,7 @@ uint32_t fragment_FlatShader(FlatShader* shader,Color vcolor1,Color vcolor2,Colo
     return flatColor;
 }
 
-void vertex_GoraudShader(VertexInput* inVertices,VertexOutput* outVertices,GouraudShader* shader,int vertexCount){
+void vertex_GouraudShader(VertexInput* inVertices,VertexOutput* outVertices,GouraudShader* shader,int vertexCount){
 
     for (int i= 0;i< vertexCount;i++){
 
