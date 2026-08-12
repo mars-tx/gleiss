@@ -2,58 +2,57 @@
 #define OBJ_H
 
 #include "vector.h"
+#include "shader.h"
 
 typedef struct{
     float m[4][4];
+
 }mat4;
 
 typedef struct{
-    vec3 pos;
-    vec3 norm;
-    float u,v;
-}vertex;
-
-typedef struct{
-    int vx_index[3];
+    int verticesIndex[3];
     vec3 norm;
 
-}face;
+}Face;
 
 typedef struct{
-    vertex* vx_all;
-    face* faces;
+    VertexInput* vertices;
+    Face* faces;
 
-    int vx_count;
-    int face_count;
+    int vertexCount;
+    int faceCount;
     
-}mesh;
+}Mesh;
 
 typedef struct{
-    mesh* mesh_data;
-    vertex* vx_trans;
+    Mesh* meshData;
+    VertexInput* verticesTransformed;
 
     mat4 model;
     vec3 pos;
     vec3 scale;
     vec3 rot;
-}object;
+}Object;
 
 typedef struct{
-    mesh* mesh_data;
+    Mesh* meshData;
 
     mat4 model;
     vec3 pos;
     vec3 scale;
     vec3 rot;
-}dynamicObject;
+
+}DynamicObject;
 
 typedef struct{
     mat4 view;
     mat4 projection;
+
+    //For view matrix
     vec3 target;
     vec3 cam_pos;
     vec3 global;
 
-}camera;
+}Camera;
 
 #endif

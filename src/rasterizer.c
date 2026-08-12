@@ -1,111 +1,82 @@
 #include <stdio.h>
 #include "math.h"
-#include "../include/obj.h"
-#include "../include/main.h"
-#include "../include/rasterizer.h"
-#include "../include/shader.h"
+#include "include/obj.h"
+#include "include/main.h"
+#include "include/shader.h"
 
-void draw_triangle_barycentric(vec3* vertices,uint32_t basecolor,shademode mode){
-    //3d vertices
-    vec3 v1= vertices[0];
-    vec3 v2= vertices[1];
-    vec3 v3= vertices[2];
+void draw_triangle_barycentric(VertexOutput* vertices,uint32_t basecolor,Shademode mode){
+
+    vec3 v1= vertices[0].clip_pos;
+    vec3 v2= vertices[1].clip_pos;
+    vec3 v3= vertices[2].clip_pos;
 
     vec3 z_inv= {1.0f/v1.z,1.0f/v2.z,1.0f/v3.z};
+
+    //Clip space to screen space
+    v1.x*= z_inv.x; v2.x*= z_inv.y; v3.x*= z_inv.z;
+    v1.y*= z_inv.x; v2.y*= z_inv.y; v3.y*= z_inv.z;
     
-    int y1= screen_y(v1.y*z_inv.x),y2= screen_y(v2.y*z_inv.y),y3= screen_y(v3.y*z_inv.z);
-    int x1= screen_x(v1.x*z_inv.x),x2= screen_x(v2.x*z_inv.y),x3= screen_x(v3.x*z_inv.z);
+    int x1= screen_x(v1.x),x2= screen_x(v2.x),x3= screen_x(v3.x);
+    int y1= screen_y(v1.y),y2= screen_y(v2.y),y3= screen_y(v3.y);
 
     int x13= x1 - x3,x23= x2 - x3;
     int y13= y1 - y3,y23= y2 - y3;
     float det= (x13* y23 - x23* y13);
     //if(det>= 0){return;}
     det= 1.0f/det;
-    float u1,u2,u3,z_inv_pixel;
-    float c1= y23*det,c2= -y13*det;
-    float r1= -x23*det,r2= x13*det;
+    float c1= y23*det, c2= -y13*det;
+    float r1= -x23*det, r2= x13*det;
 
+    //Boundaries for rasterizer
     int xmax,xmin,ymax,ymin;
-    bounding_box(vertices,&xmin,&xmax,&ymin,&ymax);
-    int xs3= xmin - x3,ys3= ymin - x3;
+    bounding_box(x1,y1,x2,y2,x3,y3,&xmin,&xmax,&ymin,&ymax);
+    int xs3= xmin - x3, ys3= ymin - x3;
 
+    float u1,u2,u3,z_inv_pixel;
     if (mode == SHADE_FLAT){
-        //float i= flat_shade(ndc_pnts);
         //basecolor= (basecolor & 0xffffff00) | (int)((basecolor & 0x000000ff)* i);
 
-        u1= det*(y23*xs3 - x23*ys3);
-        u2= det*(-y13*xs3 + x13*ys3);
+        float a= det*(y23*xs3 - x23*ys3);
+        float b= det*(-y13*xs3 + x13*ys3);
         int loc;
         for (int ys= ymin;ys<= ymax;ys++){
             for (int xs= xmin;xs<= xmax;xs++){
+
                 u3= 1-u1-u2;
                 if(u1>= 0 && u2>= 0 && u3>= 0){
+                    //Interpolating z
                     z_inv_pixel= z_inv.x* u1+ z_inv.y* u2+ z_inv.z* u3;
                     loc= ys* WIDTH+ xs;
                     if(z_inv_pixel> z_buffer[loc]){
                         z_buffer[loc]= z_inv_pixel;
+                        fragment_FlatShader();
                         pixels[loc]= basecolor;
                     }
                 }
                 u1+= c1;
                 u2+= c2;
             }
-        u1= det*(y23*xs3 - x23*ys3);
-        u2= det*(-y13*xs3 + x13*ys3);
+        u1= a;
+        u2= b;
         u1+= r1;
         u2+= r2;
         r1+= r1;r2+= r2;
         }
     }
-    /*else{
-        float i,i1,i2,i3;
-        int loc;
-        smooth_shade(ndc_pnts,&i1,&i2,&i3);
-        for (int ys= ymin;ys<= ymax;ys++){
-            for (int xs= xmin;xs<= xmax;xs++){
-                xs3= xs- x3;
-                ys3= ys- y3;
-                u1= det*(y23* xs3- x23* ys3);
-                u2= det*(-y13* xs3+ x13* ys3);
-                u3= 1-u1-u2;
-
-                if(u1>= 0 && u2>= 0 && u3>= 0){
-                    z_inv= z1* u1+ z2* u2+ z3* u3;
-                    loc= ys* WIDTH+ xs;
-                    if(z_inv> z_buffer[loc]){
-                        z_inv= 1.0f/z_inv;
-                        i= i1*u1 + i2*u2 + i3*u3; 
-                        i= MAX(0.2f,MIN(i,1.0f));
-                        pixels[loc]= (basecolor & 0xffffff00) | (uint8_t)((basecolor & 0x000000ff)* i);
-                    }
-                }
-            }
-        }
-    }*/
 }
 
-bool bounding_box(vec3* vertices,int* xmin,int* xmax,int* ymin,int* ymax){
+void draw_bounding_box(int x1,int y1,int x2,int y2,int x3,int y3,
+                       int* xmin,int* xmax,int* ymin,int* ymax){
 
-    //if(zmin> Z_FAR || zmax< Z_NEAR){return false;}
-
-    *xmin= MIN(vertices[0].x,MIN(vertices[1].x,vertices[2].x));
-    *xmax= MAX(vertices[0].x,MAX(vertices[1].x,vertices[2].x));
-    //if(xmin> zmax || xmax< -zmax){return false;}
+    *xmin= MAX(MIN(x1,MIN(x2,x3)),0);
+    *xmax= MIN(WIDTH-1,MAX(x1,MAX(x2,x3)));
     
-    *ymin= MIN(vertices[0].y,MIN(vertices[1].y,vertices[2].y));
-    *ymax= MAX(vertices[0].y,MAX(vertices[1].y,vertices[2].y));
-    //if(ymin> zmax || ymax< -zmax){return false;}
-
-    *xmin= MAX(*xmin,0);
-    *xmax= MIN(WIDTH-1,*xmax);
-    *ymin= MAX(*ymin,0);
-    *ymax= MIN(HEIGHT-1,*ymax);
-
-    return true;
+    *ymin= MAX(MIN(y1,MIN(y2,y3)),0);
+    *ymax= MIN(HEIGHT-1,MAX(y1,MAX(y2,y3)));
 }
 
 
-void point_swap(vec3* p1,vec3* p2){
+/*void point_swap(vec3* p1,vec3* p2){
     vec3 temp= *p1;
     *p1= *p2;
     *p2= temp;
@@ -121,7 +92,7 @@ void point_sort(vec3* pnts){
         if (pnts[0].y> pnts[1].y){
             point_swap(&pnts[0],&pnts[1]);
         }
-}
+}*/
 
 /*Scanline wont work when x_left==x_right
 better to draw a line instead with frontmost z*/
