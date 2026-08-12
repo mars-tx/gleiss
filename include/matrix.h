@@ -3,11 +3,12 @@
 
 #include "obj.h"
 
-void create_model_mat(Object* obj);
-void create_view_lookat_mat(Camera* cam);
-void create_proj_mat(Camera* cam);
 
-void mat_mult_mat(mat4* a,mat4* b,mat4* out);
+void build_ModelMatrix(Object* obj);
+void build_ViewLookAtMatrix(Camera* cam);
+void build_ProjectionMatrix(Camera* cam);
+
 vec3 mat_mult_vec(mat4* matrix,vec3 vec);
+void mat_mult_mat(mat4* a,mat4* b,mat4* out);
 
 #endif

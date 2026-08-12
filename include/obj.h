@@ -11,7 +11,7 @@ typedef struct{
 
 typedef struct{
     int verticesIndex[3];
-    vec3 norm;
+    vec3 faceNorm;
 
 }Face;
 
@@ -26,7 +26,7 @@ typedef struct{
 
 typedef struct{
     Mesh* meshData;
-    VertexInput* verticesTransformed;
+    VertexOutput* verticesTransformed;
 
     mat4 model;
     vec3 pos;
