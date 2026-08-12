@@ -63,7 +63,7 @@ typedef struct{
 }VertexOutput;
 
 void vertex_FlatShader(VertexInput* inVertices,VertexOutput* outVertices,FlatShader* shader,int vertexCount);
-void vertex_GoraudShader(VertexInput* inVertices,VertexOutput* outVertices,GouraudShader* shader,int vertexCount);
+void vertex_GouraudShader(VertexInput* inVertices,VertexOutput* outVertices,GouraudShader* shader,int vertexCount);
 
 uint32_t fragment_FlatShader(FlatShader* shader,Color vcolor1,Color vcolor2,Color vcolor3);
 uint32_t fragment_GouraudShader(GouraudShader* shader,Color interp,float u1,float u2);
