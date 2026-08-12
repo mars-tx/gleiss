@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include "include/matrix.h"
-#include "include/shader.h"
 #include "include/main.h"
+#include "include/matrix.h"
+#include "include/vector.h"
+#include "include/shader.h"
 
 //Goes over entire vertex array, gives projected ones
 void vertex_FlatShader(VertexInput* inVertices,VertexOutput* outVertices,FlatShader* shader,int vertexCount){

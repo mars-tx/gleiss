@@ -15,7 +15,7 @@ SDL_Renderer* renderer= NULL;
 SDL_Texture* texture= NULL;
 SDL_PixelFormat pixel_format= SDL_PIXELFORMAT_RGBA8888;
 
-mat4 projview;
+mat4 PV;
 
 uint32_t pixels[WIDTH*HEIGHT];
 float z_buffer[WIDTH*HEIGHT];
@@ -48,12 +48,14 @@ int main(){
         create_view_lookat_mat(cam);
         projview= mat_mult_mat(proj,&cam->view);*/
 
+        //CPU to PCIe lanes to VRAM 
+        SDL_UpdateTexture(texture,NULL,pixels,WIDTH*4);         
 
-        SDL_UpdateTexture(texture,NULL,pixels,WIDTH*4);         //cpu to pcie lanes to vram
-
-        SDL_RenderTexture(renderer,texture,NULL,NULL);          //draws into buffer
-
-        SDL_RenderPresent(renderer);            //swap gpu buffers
+        //Draws into buffer
+        SDL_RenderTexture(renderer,texture,NULL,NULL);          
+        
+        //Swap GPU buffers
+        SDL_RenderPresent(renderer);            
 
         sleep(2);break;
         
@@ -66,53 +68,6 @@ int main(){
     return 0;
 }
 
-
-bool render_StaticObject(Object* obj,vec3 lightDir,Shademode mode){
-
-    Mesh* mesh= obj->meshData;
-    //if dynamic obj then vtrans stack alloc
-    VertexOutput* vTrans= obj->verticesTransformed;
-
-    //setMeshVerticesNormal(mesh);
-
-    mat4 PVM;
-    build_ModelMatrix(obj);
-    mat_mult_mat(&projview,&obj->model,&PVM); 
-
-    //Vertex shader
-    Shader shader;
-    if(mode== SHADE_FLAT){
-        shader.Flat.lightDir= lightDir;
-        shader.Flat.M= &obj->model;  //could be MV
-        shader.Flat.PVM= &PVM;
-        vertex_FlatShader(mesh->vertices,vTrans,&shader,mesh->vertexCount);
-    }
-    if(mode== SHADE_FLAT){
-        shader.Gouraud.lightDir= lightDir;
-        shader.Gouraud.M= &obj->model;  //could be MV
-        shader.Gouraud.PVM= &PVM;
-        shader.Gouraud.N;
-        vertex_GouraudShader(mesh->vertices,vTrans,&shader,mesh->vertexCount);
-    }
-
-    int num= mesh->faceCount;
-    Face* faces= mesh->faces;
-    VertexOutput faceVertices[3];
-    for (int i= 0;i< num;i++){
-
-        faceVertices[0]= vTrans[faces[i].verticesIndex[0]];
-        faceVertices[1]= vTrans[faces[i].verticesIndex[1]];
-        faceVertices[2]= vTrans[faces[i].verticesIndex[2]];
-
-        if(mode== SHADE_FLAT){
-            rasterize_barycentricFlat(faceVertices,&shader.Flat);
-        }
-        else if(mode== SHADE_GOURAUD){
-            rasterize_barycentricGouraud(faceVertices,&shader.Gouraud);
-        }
-
-    }
-}
 
 void clean_buffer(){
     uint32_t bg= 0x000000ff;

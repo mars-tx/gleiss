@@ -1,7 +1,6 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <stdint.h>
 #include "vector.h"
 
 typedef enum{SHADE_FLAT,SHADE_GOURAUD}Shademode;
