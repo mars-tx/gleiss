@@ -15,6 +15,10 @@ SDL_Renderer* renderer= NULL;
 SDL_Texture* texture= NULL;
 SDL_PixelFormat pixel_format= SDL_PIXELFORMAT_RGBA8888;
 
+void create_Window();
+void init_Renderer();
+void init_Texture();
+
 mat4 PV;
 
 uint32_t pixels[WIDTH*HEIGHT];
@@ -25,9 +29,9 @@ void clean_buffer();
 
 int main(){
 
-    create_window();
-    init_renderer();
-    init_texture();
+    create_Window();
+    init_Renderer();
+    init_Texture();
 
     memset(z_buffer,0,sizeof(z_buffer));
     clean_buffer();
