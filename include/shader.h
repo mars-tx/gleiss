@@ -1,9 +1,15 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include <stdint.h>
 #include "vector.h"
 
 typedef enum{SHADE_FLAT,SHADE_GOURAUD}Shademode;
+
+typedef struct{
+    float r,g,b,a;
+
+}Color;
 
 typedef struct{
     //Per object
@@ -13,7 +19,7 @@ typedef struct{
     vec3 lightDir;
     //Per face
     vec3 faceNorm;
-    float i;
+    float intensity;
 
 }FlatShader;
 
@@ -30,7 +36,14 @@ typedef struct{
 }GouraudShader;
 
 typedef struct{
-    //Local space
+    FlatShader Flat;
+    GouraudShader Gouraud;
+
+}Shader;
+
+//Inside Mesh
+typedef struct{
+    uint32_t vertexColor;
     vec3 pos;
     vec3 norm;
     vec2 texture;
@@ -38,17 +51,21 @@ typedef struct{
 }VertexInput;
 
 typedef struct{
+    Color vertexColor;
     //vec3 clip_pos as z remains intact
-    vec3 clip_pos;
+    vec3 clipPos;
     //Transformed norm
     vec3 norm;
-    //Passed along
-    vec3 world_pos;
+
+    vec3 worldPos;
     vec2 texture;
 
 }VertexOutput;
 
 void vertex_FlatShader(VertexInput* inVertices,VertexOutput* outVertices,FlatShader* shader,int vertexCount);
 void vertex_GoraudShader(VertexInput* inVertices,VertexOutput* outVertices,GouraudShader* shader,int vertexCount);
+
+uint32_t fragment_FlatShader(FlatShader* shader,Color vcolor1,Color vcolor2,Color vcolor3);
+uint32_t fragment_GouraudShader(GouraudShader* shader,Color interp,float u1,float u2);
 
 #endif
