@@ -12,7 +12,7 @@ This project implements a complete, customizable 3D graphics pipeline entirely o
 * **Programmable-Style Shader Architecture:** 
   * Vertex Shader batch pass (`Flat` & `Gouraud`).
   * Custom Fragment Shader passes.
-* **Barycentric Rasterizer:** Fast 2D bounding-box rasterizer using edge functions and barycentric coordinates ($u_1, u_2, u_3$).
+* **Barycentric Rasterizer:** Fast 2D bounding-box rasterizer using edge functions and barycentric coordinates 
 * **Z-Buffering:** Pixel-accurate depth buffer for sorting overlapping 3D geometry.
 * **Multiple Lighting Modes:**
   * **Flat Shading:** Per-face normal calculation and uniform color output.
@@ -25,7 +25,6 @@ This project implements a complete, customizable 3D graphics pipeline entirely o
 
 [ Mesh Data ]
 
-▼
 1. Vertex Shader Pass ─────► Transforms positions (MVP Matrix) & computes per-vertex attributes.
 
 2. Primitive Assembly ─────► Groups transformed vertices into 3-vertex faces.

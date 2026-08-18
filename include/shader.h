@@ -18,7 +18,6 @@ typedef struct{
     vec3 lightDir;
     //Per face
     vec3 faceNorm;
-    float intensity;
 
 }FlatShader;
 

@@ -3,8 +3,13 @@
 
 #include "obj.h"
 
+typedef struct{
+    float mat[4][4];
+
+}mat4;
 
 void build_ModelMatrix(Object* obj);
+voud build_NormallMatrix(mat4* normMat,mat4* modelMat);
 void build_ViewLookAtMatrix(Camera* cam);
 void build_ProjectionMatrix(Camera* cam);
 

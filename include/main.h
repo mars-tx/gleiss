@@ -6,7 +6,7 @@
 
 #define WIDTH 800
 #define HEIGHT 600
-#define FOV_ANGLE_Y 3.1415/2.0f
+
 #define Z_NEAR 0.1f
 #define Z_FAR 100.0f
 
