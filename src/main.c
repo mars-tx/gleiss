@@ -48,9 +48,6 @@ int main(){
         clean_buffer();
         memset(z_buffer,0,sizeof(z_buffer));
 
-        /*cam->target.y+=0.1f;
-        create_view_lookat_mat(cam);
-        projview= mat_mult_mat(proj,&cam->view);*/
 
         //CPU to PCIe lanes to VRAM 
         SDL_UpdateTexture(texture,NULL,pixels,WIDTH*4);         

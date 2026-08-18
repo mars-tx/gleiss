@@ -3,11 +3,7 @@
 
 #include "vector.h"
 #include "shader.h"
-
-typedef struct{
-    float m[4][4];
-
-}mat4;
+#include "matrix.h"
 
 typedef struct{
     int verticesIndex[3];
@@ -52,6 +48,9 @@ typedef struct{
     vec3 target;
     vec3 cam_pos;
     vec3 global;
+
+    //In radians
+    float yFov;
 
 }Camera;
 
