@@ -6,19 +6,19 @@
 #include "include/shader.h"
 
 void set_MeshFacesNormal(Mesh* inMesh) {
-    int num = inMesh->faceCount;
-    VertexInput* vertices = inMesh->vertices;
-    Face* faces = inMesh->faces;
+    int num= inMesh->faceCount;
+    VertexInput* vertices= inMesh->vertices;
+    Face* faces= inMesh->faces;
 
-    for (int i = 0; i < num; i++) {
-        vec3 v1 = vertices[faces[i].verticesIndex[0]].pos;
-        vec3 v2 = vertices[faces[i].verticesIndex[1]].pos;
-        vec3 v3 = vertices[faces[i].verticesIndex[2]].pos;
+    for (int i= 0; i < num; i++) {
+        vec3 v1= vertices[faces[i].verticesIndex[0]].pos;
+        vec3 v2= vertices[faces[i].verticesIndex[1]].pos;
+        vec3 v3= vertices[faces[i].verticesIndex[2]].pos;
 
-        vec3 e1 = vec3Sub(v2, v1);
-        vec3 e2 = vec3Sub(v3, v1);
+        vec3 e1= vec3Sub(v2, v1);
+        vec3 e2= vec3Sub(v3, v1);
 
-        faces[i].faceNorm = vec3Normalize(vec3Cross(e1, e2));
+        faces[i].faceNorm= vec3Normalize(vec3Cross(e1, e2));
     }
 }
 
@@ -32,7 +32,7 @@ void set_MeshVerticesNormal(Mesh* inMesh){
     }
 }
 
-Mesh* load_obj(const char* filename, uint32_t defaultColor) {
+Mesh* load_Object(const char* filename, uint32_t defaultColor) {
     FILE* file = fopen(filename, "r");
     if (!file) {
         printf("Failed to open file: %s\n", filename);
@@ -64,13 +64,13 @@ Mesh* load_obj(const char* filename, uint32_t defaultColor) {
             vertices[v_count].norm = (vec3){0, 0, 0};
 
             if (parsed == 6 && r >= 0.0f) {
-                // OBJ contained per-vertex RGB floats (0.0 to 1.0) -> pack to uint32_t 0xRRGGBBAA
-                uint8_t ur = (uint8_t)(r * 255.0f);
-                uint8_t ug = (uint8_t)(g * 255.0f);
-                uint8_t ub = (uint8_t)(b * 255.0f);
+                //Per-vertex RGB floats (0 to 1) to uint32_t RGBA
+                uint8_t ur= (uint8_t)(r * 255.0f);
+                uint8_t ug= (uint8_t)(g * 255.0f);
+                uint8_t ub= (uint8_t)(b * 255.0f);
                 vertices[v_count].vertexColor = (ur << 24) | (ug << 16) | (ub << 8) | 0xFF;
             } else {
-                // Fallback to the default hex color passed into the function
+                // Fallback 
                 vertices[v_count].vertexColor = defaultColor;
             }
 
@@ -91,7 +91,7 @@ Mesh* load_obj(const char* filename, uint32_t defaultColor) {
                 continue;
             }
 
-            // Convert Wavefront 1-based indexing to C 0-based array indices
+            // Convert 1-based indexing to 0-based indices
             faces[f_count].verticesIndex[0] = v1 - 1;
             faces[f_count].verticesIndex[1] = v2 - 1;
             faces[f_count].verticesIndex[2] = v3 - 1;
@@ -106,14 +106,14 @@ Mesh* load_obj(const char* filename, uint32_t defaultColor) {
     mesh->vertexCount = v_count;
     mesh->faceCount = f_count;
 
-    // Build per-face and per-vertex normals automatically
+    // Build per-face and per-vertex normals
     set_MeshFacesNormal(mesh);
     set_MeshVerticesNormal(mesh);
 
     return mesh;
 }
 
-void free_mesh(Mesh* mesh) {
+void free_Mesh(Mesh* mesh) {
     if (mesh) {
         if (mesh->vertices) free(mesh->vertices);
         if (mesh->faces) free(mesh->faces);

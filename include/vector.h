@@ -1,7 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "include/obj.h"
 
 typedef struct{
     int u,v;
