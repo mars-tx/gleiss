@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include "include/main.h"
-#include "include/matrix.h"
-#include "include/vector.h"
-#include "include/shader.h"
+#include "../include/main.h"
+#include "../include/matrix.h"
+#include "../include/shader.h"
 
 //Goes over entire vertex array, gives projected ones
 void vertex_FlatShader(VertexInput* inVertices,VertexOutput* outVertices,FlatShader* shader,int vertexCount){
@@ -53,7 +52,7 @@ void vertex_GouraudShader(VertexInput* inVertices,VertexOutput* outVertices,Gour
 
         //outVertices[i].worldPos= mat_mult_vec(shader->M,inVertices[i].pos);
         outVertices[i].clipPos= mat_mult_vec(shader->PVM,inVertices[i].pos);
-	outVertices[i].norm= mat_mult_vec(shader->N,inVertices[i].norm);
+	    outVertices[i].norm= mat_mult_vec(shader->N,inVertices[i].norm);
 
         //Color between 0-1
         float div= 1.0f/255.0f;
