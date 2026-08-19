@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "include/obj.h"
-#include "include/vector.h"
-#include "include/shader.h"
+#include "../include/obj.h"
+#include "../include/vector.h"
 
 void set_MeshFacesNormal(Mesh* inMesh) {
     int num= inMesh->faceCount;
@@ -35,7 +33,7 @@ void set_MeshVerticesNormal(Mesh* inMesh){
 Mesh* load_Object(const char* filename, uint32_t defaultColor) {
     FILE* file = fopen(filename, "r");
     if (!file) {
-        printf("Failed to open file: %s\n", filename);
+        fprintf(stderr,"Failed to open file");
         return NULL;
     }
 
@@ -44,6 +42,14 @@ Mesh* load_Object(const char* filename, uint32_t defaultColor) {
 
     VertexInput* vertices = malloc(v_cap * sizeof(VertexInput));
     Face* faces = malloc(f_cap * sizeof(Face));
+
+    if (!vertices || !faces) {
+        fprintf(stderr, "Out of memory allocating mesh buffers\n");
+        fclose(file); 
+        free(vertices); 
+        free(faces);
+        return NULL;
+    }
 
     char line[128];
     while (fgets(line, sizeof(line), file)) {

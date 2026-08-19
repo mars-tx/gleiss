@@ -1,9 +1,7 @@
 #include <stdio.h>
-#include "math.h"
-#include "include/main.h"
-#include "include/vector.h"
-#include "include/obj.h"
-#include "include/shader.h"
+#include "../include/main.h"
+#include "../include/vector.h"
+#include "../include/shader.h"
 
 void draw_bounding_box(int x1,int y1,int x2,int y2,int x3,int y3,
                        int* xmin,int* xmax,int* ymin,int* ymax){
@@ -34,7 +32,7 @@ void rasterize_barycentricFlat(VertexOutput* vertices,FlatShader* shader){
     int y13= y1 - y3,y23= y2 - y3;
     float det= (x13*y23 - x23*y13);
 
-    //if(det>= 0){return;}
+    if(det>= 0){return;}
 
     det= 1.0f/det;
     float c1= y23*det, c2= -y13*det;
@@ -54,6 +52,7 @@ void rasterize_barycentricFlat(VertexOutput* vertices,FlatShader* shader){
 
     float a= det*(y23*xs3 - x23*ys3);
     float b= det*(-y13*xs3 + x13*ys3);
+
     float u1,u2,u3,z_inv_pixel;
     int loc;
     for (int ys= ymin;ys<= ymax;ys++){
@@ -76,7 +75,6 @@ void rasterize_barycentricFlat(VertexOutput* vertices,FlatShader* shader){
     u2= b;
     u1+= r1;
     u2+= r2;
-    r1+= r1;r2+= r2;
     }
 }
 
@@ -99,7 +97,7 @@ void rasterize_barycentricGouraud(VertexOutput* vertices,GouraudShader* shader){
     int y13= y1 - y3,y23= y2 - y3;
     float det= (x13*y23 - x23*y13);
 
-    //if(det>= 0){return;}
+    if(det>= 0){return;}
 
     det= 1.0f/det;
     float c1= y23*det, c2= -y13*det;
@@ -120,9 +118,10 @@ void rasterize_barycentricGouraud(VertexOutput* vertices,GouraudShader* shader){
     draw_bounding_box(x1,y1,x2,y2,x3,y3,&xmin,&xmax,&ymin,&ymax);
     int xs3= xmin - x3, ys3= ymin - x3;
 
-    float u1,u2,u3,z_inv_pixel;
     float a= det*(y23*xs3 - x23*ys3);
     float b= det*(-y13*xs3 + x13*ys3);
+
+    float u1,u2,u3,z_inv_pixel;
     int loc;
     for (int ys= ymin;ys<= ymax;ys++){
         for (int xs= xmin;xs<= xmax;xs++){
@@ -150,7 +149,6 @@ void rasterize_barycentricGouraud(VertexOutput* vertices,GouraudShader* shader){
     u2= b;
     u1+= r1;
     u2+= r2;
-    r1+= r1;r2+= r2;
     }
 }
 
