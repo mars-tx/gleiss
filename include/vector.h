@@ -19,7 +19,7 @@ static inline vec3 vec3Sub(vec3 v1,vec3 v2){
 
 static inline float vec3Dot(vec3 v1,vec3 v2){
 
-    int res= v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+    float res= v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
     return res;
 }
 

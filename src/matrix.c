@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include "../include/vector.h"
-
-typedef struct{
-    float m[4][4];
-
-}mat4;
+#include "../include/matrix.h"
 
 void mat_print(mat4* mat){
    for(int i= 0;i< 4;i++){
