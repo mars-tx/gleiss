@@ -1,7 +1,7 @@
-#include <stdlib.h>
+#include <string.h>
 #include "../include/matrix.h"
 #include "../include/obj.h"
-#include "../include/main.h"
+#include "../include/buffer.h"
 
 //TODO:Quarternions implement
 //Using rot vec gives gimbal
@@ -162,11 +162,11 @@ void build_ViewLookAtMatrix(Camera* cam){
 }
 
 //no w use yet but still have it
-void build_ProjectionMatrix(Camera* cam){
+void build_ProjectionMatrix(Camera* cam,Framebuffer* fb){
 
    mat4 projMat={0};
    float oot= 1.0f/tanf(cam->yFov/2.0f);
-   float aspect= (float)WIDTH/HEIGHT;
+   float aspect= (float)fb->width/fb->height;
 
    projMat.m[0][0]= oot* 1.0f/aspect;
    projMat.m[1][1]= oot;
@@ -178,4 +178,3 @@ void build_ProjectionMatrix(Camera* cam){
    //printf("PROJJ\n");mat_print(projMat);
    return;
 }
-

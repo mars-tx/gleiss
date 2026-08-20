@@ -1,7 +1,8 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/obj.h"
 #include "../include/vector.h"
+#include "../include/obj.h"
 
 void set_MeshFacesNormal(Mesh* inMesh) {
     int num= inMesh->faceCount;
@@ -53,30 +54,27 @@ Mesh* load_Object(const char* filename, uint32_t defaultColor) {
 
     char line[128];
     while (fgets(line, sizeof(line), file)) {
-        // Parse Vertex Positions and Colors (v x y z [r g b])
+        //Parse Vertex Positions and Colors (v x y z r g b a)
         if (line[0] == 'v' && line[1] == ' ') {
             if (v_count >= v_cap) {
                 v_cap *= 2;
                 vertices = realloc(vertices, v_cap * sizeof(VertexInput));
             }
 
+            uint8_t r= 255, g= 255, b= 255, a= 0;
             float x, y, z;
-            float r = -1.0f, g = -1.0f, b = -1.0f;
 
-            // Try reading position AND RGB color from line (v x y z r g b)
-            int parsed = sscanf(line, "v %f %f %f %f %f %f", &x, &y, &z, &r, &g, &b);
+            //RGBA being between 0-255
+            int parsed = sscanf(line, "v %f %f %f %hhu %hhu %hhu %hhu", &x, &y, &z, &r, &g, &b, &a);
 
             vertices[v_count].pos = (vec3){x, y, z};
             vertices[v_count].norm = (vec3){0, 0, 0};
 
-            if (parsed == 6 && r >= 0.0f) {
-                //Per-vertex RGB floats (0 to 1) to uint32_t RGBA
-                uint8_t ur= (uint8_t)(r * 255.0f);
-                uint8_t ug= (uint8_t)(g * 255.0f);
-                uint8_t ub= (uint8_t)(b * 255.0f);
-                vertices[v_count].vertexColor = (ur << 24) | (ug << 16) | (ub << 8) | 0xFF;
-            } else {
-                // Fallback 
+            if (parsed == 7 && a > 0) {
+                //Per-vertex uint32_t RGBA
+                vertices[v_count].vertexColor = (r << 24) | (g << 16) | (b << 8) | a;
+            } 
+            else {
                 vertices[v_count].vertexColor = defaultColor;
             }
 
@@ -97,7 +95,7 @@ Mesh* load_Object(const char* filename, uint32_t defaultColor) {
                 continue;
             }
 
-            // Convert 1-based indexing to 0-based indices
+            //Convert 1-based indexing to 0-based indices
             faces[f_count].verticesIndex[0] = v1 - 1;
             faces[f_count].verticesIndex[1] = v2 - 1;
             faces[f_count].verticesIndex[2] = v3 - 1;
@@ -112,7 +110,7 @@ Mesh* load_Object(const char* filename, uint32_t defaultColor) {
     mesh->vertexCount = v_count;
     mesh->faceCount = f_count;
 
-    // Build per-face and per-vertex normals
+    //Build per-face and per-vertex normals
     set_MeshFacesNormal(mesh);
     set_MeshVerticesNormal(mesh);
 

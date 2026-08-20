@@ -3,11 +3,12 @@
 #include "../include/matrix.h"
 #include "../include/obj.h"
 #include "../include/rasterizer.h"
+#include "../include/buffer.h"
 
 #define MAX_RENDER_VERTICES 10000
 static VertexOutput vertexBuffer[MAX_RENDER_VERTICES];
 
-bool render_Object(mat4* PV,Object* obj,vec3 lightDir,Shademode mode){
+bool render_Object(Framebuffer* buffer,mat4* PV,Object* obj,vec3 lightDir,Shademode mode){
 
     if (!obj || !obj->meshData || !PV){ 
         fprintf(stderr, "Error: Null pointer passed to render function\n");
@@ -58,10 +59,10 @@ bool render_Object(mat4* PV,Object* obj,vec3 lightDir,Shademode mode){
 
         if(mode == SHADE_FLAT){
 	        shader.Flat.faceNorm= mat_mult_vec(&N,faces[i].faceNorm);
-            rasterize_barycentricFlat(faceVertices,&shader.Flat);
+            rasterize_barycentricFlat(buffer,faceVertices,&shader.Flat);
         }
         else if(mode == SHADE_GOURAUD){
-            rasterize_barycentricGouraud(faceVertices,&shader.Gouraud);
+            rasterize_barycentricGouraud(buffer,faceVertices,&shader.Gouraud);
         }
     }
     return true;
