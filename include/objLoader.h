@@ -3,7 +3,8 @@
 
 #include "obj.h"
 
-Mesh* load_obj(const char* filename, uint32_t defaultColor);
-void free_mesh(Mesh* mesh);
+Mesh* load_Object(const char* filename, uint32_t defaultColor);
+
+void free_Mesh(Mesh* mesh);
 
 #endif
