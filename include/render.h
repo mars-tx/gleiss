@@ -5,6 +5,6 @@
 #include "obj.h"
 #include "buffer.h"
 
-bool render_Object(Framebuffer* buffer, mat4* PV, Object* obj, vec3 lightDir, Shademode mode);
+bool render_Object(Framebuffer* buffer, mat4* PV, Object* obj, vec3 light_dir, Shademode mode);
 
 #endif

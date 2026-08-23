@@ -5,25 +5,25 @@
 #include "../include/obj.h"
 
 void set_MeshFacesNormal(Mesh* inMesh) {
-    int num= inMesh->faceCount;
+    int num= inMesh->face_count;
     VertexInput* vertices= inMesh->vertices;
     Face* faces= inMesh->faces;
 
     for (int i= 0; i < num; i++) {
-        vec3 v1= vertices[faces[i].verticesIndex[0]].pos;
-        vec3 v2= vertices[faces[i].verticesIndex[1]].pos;
-        vec3 v3= vertices[faces[i].verticesIndex[2]].pos;
+        vec3 v1= vertices[faces[i].vertices_index[0]].pos;
+        vec3 v2= vertices[faces[i].vertices_index[1]].pos;
+        vec3 v3= vertices[faces[i].vertices_index[2]].pos;
 
         vec3 e1= vec3Sub(v2, v1);
         vec3 e2= vec3Sub(v3, v1);
 
-        faces[i].faceNorm= vec3Normalize(vec3Cross(e1, e2));
+        faces[i].face_norm= vec3Normalize(vec3Cross(e1, e2));
     }
 }
 
 void set_MeshVerticesNormal(Mesh* inMesh){
 
-    int num= inMesh->vertexCount;
+    int num= inMesh->vertex_count;
     VertexInput* vertices= inMesh->vertices;
     for (int i= 0;i< num;i++){
 
@@ -54,23 +54,23 @@ Mesh* load_Object(const char* filename, uint32_t defaultColor) {
 
     char line[128];
     while (fgets(line, sizeof(line), file)) {
-        //Parse Vertex Positions and Colors (v x y z r g b a)
+        //Parse Vertex Positions and Colors (v x y z r g b)
         if (line[0] == 'v' && line[1] == ' ') {
             if (v_count >= v_cap) {
                 v_cap *= 2;
                 vertices = realloc(vertices, v_cap * sizeof(VertexInput));
             }
 
-            uint8_t r= 255, g= 255, b= 255, a= 0;
+            uint8_t r= 255, g= 255, b= 255, a= 255;
             float x, y, z;
 
             //RGBA being between 0-255
-            int parsed = sscanf(line, "v %f %f %f %hhu %hhu %hhu %hhu", &x, &y, &z, &r, &g, &b, &a);
+            int parsed = sscanf(line, "v %f %f %f %hhu %hhu %hhu", &x, &y, &z, &r, &g, &b);
 
             vertices[v_count].pos = (vec3){x, y, z};
             vertices[v_count].norm = (vec3){0, 0, 0};
 
-            if (parsed == 7 && a > 0) {
+            if (parsed == 7) {
                 //Per-vertex uint32_t RGBA
                 vertices[v_count].vertexColor = (r << 24) | (g << 16) | (b << 8) | a;
             } 
@@ -96,9 +96,9 @@ Mesh* load_Object(const char* filename, uint32_t defaultColor) {
             }
 
             //Convert 1-based indexing to 0-based indices
-            faces[f_count].verticesIndex[0] = v1 - 1;
-            faces[f_count].verticesIndex[1] = v2 - 1;
-            faces[f_count].verticesIndex[2] = v3 - 1;
+            faces[f_count].vertices_index[0] = v1 - 1;
+            faces[f_count].vertices_index[1] = v2 - 1;
+            faces[f_count].vertices_index[2] = v3 - 1;
             f_count++;
         }
     }
@@ -107,8 +107,8 @@ Mesh* load_Object(const char* filename, uint32_t defaultColor) {
     Mesh* mesh = malloc(sizeof(Mesh));
     mesh->vertices = vertices;
     mesh->faces = faces;
-    mesh->vertexCount = v_count;
-    mesh->faceCount = f_count;
+    mesh->vertex_count = v_count;
+    mesh->face_count = f_count;
 
     //Build per-face and per-vertex normals
     set_MeshFacesNormal(mesh);

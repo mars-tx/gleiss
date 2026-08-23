@@ -16,9 +16,9 @@ typedef struct{
     mat4* PVM;
     mat4* M;
 
-    vec3 lightDir;
+    vec3 light_dir;
     //Per face
-    vec3 faceNorm;
+    vec3 face_norm;
 
 }FlatShader;
 
@@ -28,7 +28,7 @@ typedef struct{
     mat4* M;
     mat4* N;
 
-    vec3 lightDir;
+    vec3 light_dir;
     //Per face vertices
     float i1,i2,i3;
 

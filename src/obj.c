@@ -10,7 +10,7 @@
 void build_ModelMatrix(Object* obj) {
 
     mat4 model_mat;
-    vec3 pos= obj->pos;
+    vec3 pos= obj->position;
     vec3 scale= obj->scale;
     
     //Raw angles
@@ -50,9 +50,9 @@ void build_ModelMatrix(Object* obj) {
     obj->model= model_mat;
 }
 
-void build_NormalMatrix(mat4* normMat,mat4* modelMat){
+void build_NormalMatrix(mat4* norm_mat,mat4* model_mat){
 
-    float (*m)[4]= modelMat->m;
+    float (*m)[4]= model_mat->m;
 
     float det;
     det= m[0][0]*(m[1][1] * m[2][2] - m[1][2] * m[2][1])
@@ -61,35 +61,36 @@ void build_NormalMatrix(mat4* normMat,mat4* modelMat){
 
     //0 determinant 
     if (fabsf(det) < 0.0001f){
-        memset(normMat, 0, sizeof(mat4));
-        normMat->m[0][0] = normMat->m[1][1] = normMat->m[2][2] = normMat->m[3][3] = 1.0f;
+        memset(norm_mat, 0, sizeof(mat4));
+        norm_mat->m[0][0] = norm_mat->m[1][1] = 
+        norm_mat->m[2][2] = norm_mat->m[3][3] = 1.0f;
         return;
     }
 
     det = 1.0f / det;
     // Row 1 of Normal Matrix 
-    normMat->m[0][0]= (m[1][1] * m[2][2] - m[1][2] * m[2][1]) * det;
-    normMat->m[0][1]= (m[1][2] * m[2][0] - m[1][0] * m[2][2]) * det;
-    normMat->m[0][2]= (m[1][0] * m[2][1] - m[1][1] * m[2][0]) * det;
-    normMat->m[0][3]= 0;
+    norm_mat->m[0][0]= (m[1][1] * m[2][2] - m[1][2] * m[2][1]) * det;
+    norm_mat->m[0][1]= (m[1][2] * m[2][0] - m[1][0] * m[2][2]) * det;
+    norm_mat->m[0][2]= (m[1][0] * m[2][1] - m[1][1] * m[2][0]) * det;
+    norm_mat->m[0][3]= 0;
 
     // Row 2 of Normal Matrix 
-    normMat->m[1][0]= (m[0][2] * m[2][1] - m[0][1] * m[2][2]) * det; 
-    normMat->m[1][1]= (m[0][0] * m[2][2] - m[0][2] * m[2][0]) * det;
-    normMat->m[1][2]= (m[0][1] * m[2][0] - m[0][0] * m[2][1]) * det; 
-    normMat->m[1][3]= 0;
+    norm_mat->m[1][0]= (m[0][2] * m[2][1] - m[0][1] * m[2][2]) * det; 
+    norm_mat->m[1][1]= (m[0][0] * m[2][2] - m[0][2] * m[2][0]) * det;
+    norm_mat->m[1][2]= (m[0][1] * m[2][0] - m[0][0] * m[2][1]) * det; 
+    norm_mat->m[1][3]= 0;
 
     // Row 3 of Normal Matrix 
-    normMat->m[2][0]= (m[0][1] * m[1][2] - m[0][2] * m[1][1]) * det;
-    normMat->m[2][1]= (m[0][2] * m[1][0] - m[0][0] * m[1][2]) * det; 
-    normMat->m[2][2]= (m[0][0] * m[1][1] - m[0][1] * m[1][0]) * det;
-    normMat->m[2][3]= 0;
+    norm_mat->m[2][0]= (m[0][1] * m[1][2] - m[0][2] * m[1][1]) * det;
+    norm_mat->m[2][1]= (m[0][2] * m[1][0] - m[0][0] * m[1][2]) * det; 
+    norm_mat->m[2][2]= (m[0][0] * m[1][1] - m[0][1] * m[1][0]) * det;
+    norm_mat->m[2][3]= 0;
 
     // Row 4 of Normal Matrix 
-    normMat->m[3][0]= 0;
-    normMat->m[3][1]= 0;
-    normMat->m[3][2]= 0;
-    normMat->m[3][3]= 0;
+    norm_mat->m[3][0]= 0;
+    norm_mat->m[3][1]= 0;
+    norm_mat->m[3][2]= 0;
+    norm_mat->m[3][3]= 0;
 }
 
 /*LOOKAT matrix wont work if camera is pointing straight up or down
@@ -97,7 +98,7 @@ For that its better to switch to global_z or Quaternions*/
 void build_ViewLookAtMatrix(Camera* cam){
 
    mat4 view_mat;
-   vec3 cam_pos= cam->cam_pos;
+   vec3 cam_pos= cam->position;
    vec3 global= cam->global;
    float magn;
 

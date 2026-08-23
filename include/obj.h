@@ -8,8 +8,8 @@
 #include "buffer.h"
 
 typedef struct{
-    int verticesIndex[3];
-    vec3 faceNorm;
+    int vertices_index[3];
+    vec3 face_norm;
 
 }Face;
 
@@ -17,23 +17,23 @@ typedef struct{
     VertexInput* vertices;
     Face* faces;
 
-    int vertexCount;
-    int faceCount;
+    int vertex_count;
+    int face_count;
     
 }Mesh;
 
 typedef struct{
-    Mesh* meshData;
+    Mesh* mesh_data;
 
     mat4 model;
-    vec3 pos;
+    vec3 position;
     vec3 scale;
     vec3 rot;
 }Object;
 
 void build_ModelMatrix(Object* obj);
 
-void build_NormalMatrix(mat4* normMat,mat4* modelMat);
+void build_NormalMatrix(mat4* norm_mat,mat4* model_mat);
 
 typedef struct{
     mat4 view;
@@ -41,7 +41,7 @@ typedef struct{
 
     //For view matrix
     vec3 target;
-    vec3 cam_pos;
+    vec3 position;
     vec3 global;
 
     //In radians
