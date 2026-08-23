@@ -6,21 +6,21 @@
 #include "../include/buffer.h"
 
 #define MAX_RENDER_VERTICES 10000
-static VertexOutput vertexBuffer[MAX_RENDER_VERTICES];
+static VertexOutput g_vertexBuffer[MAX_RENDER_VERTICES];
 
-bool render_Object(Framebuffer* buffer,mat4* PV,Object* obj,vec3 lightDir,Shademode mode){
+bool render_Object(Framebuffer* buffer,mat4* PV,Object* obj,vec3 light_dir,Shademode mode){
 
-    if (!obj || !obj->meshData || !PV){ 
+    if (!obj || !obj->mesh_data || !PV){ 
         fprintf(stderr, "Error: Null pointer passed to render function\n");
         return false;
     }
-    if (obj->meshData->vertexCount <= 0 || obj->meshData->faceCount <= 0) {
+    if (obj->mesh_data->vertex_count <= 0 || obj->mesh_data->face_count <= 0) {
         return false; 
     }
 
-    Mesh* mesh= obj->meshData;
+    Mesh* mesh= obj->mesh_data;
 
-    if (mesh->vertexCount > MAX_RENDER_VERTICES) {
+    if (mesh->vertex_count > MAX_RENDER_VERTICES) {
         fprintf(stderr, "Error: Mesh exceeds scratch vertex buffer size!\n");
         return false;
     }
@@ -34,31 +34,31 @@ bool render_Object(Framebuffer* buffer,mat4* PV,Object* obj,vec3 lightDir,Shadem
     //Vertex shader
     Shader shader;
     if(mode == SHADE_FLAT){
-        shader.Flat.lightDir= lightDir;
+        shader.Flat.light_dir= light_dir;
         shader.Flat.M= &obj->model;  //could be MV
         shader.Flat.PVM= &PVM;
-        vertex_FlatShader(mesh->vertices,vertexBuffer,&shader.Flat,mesh->vertexCount);
+        vertex_FlatShader(mesh->vertices,g_vertexBuffer,&shader.Flat,mesh->vertex_count);
     }
     else if(mode == SHADE_GOURAUD){
-        shader.Gouraud.lightDir= lightDir;
+        shader.Gouraud.light_dir= light_dir;
         shader.Gouraud.M= &obj->model;  //could be MV
         shader.Gouraud.PVM= &PVM;
         shader.Gouraud.N= &N;
-        vertex_GouraudShader(mesh->vertices,vertexBuffer,&shader.Gouraud,mesh->vertexCount);
+        vertex_GouraudShader(mesh->vertices,g_vertexBuffer,&shader.Gouraud,mesh->vertex_count);
     }
 
     //Primitive Assembly
-    int num= mesh->faceCount;
+    int num= mesh->face_count;
     Face* faces= mesh->faces;
     VertexOutput faceVertices[3];
     for (int i= 0;i< num;i++){
 
-        faceVertices[0]= vertexBuffer[faces[i].verticesIndex[0]];
-        faceVertices[1]= vertexBuffer[faces[i].verticesIndex[1]];
-        faceVertices[2]= vertexBuffer[faces[i].verticesIndex[2]];
+        faceVertices[0]= g_vertexBuffer[faces[i].vertices_index[0]];
+        faceVertices[1]= g_vertexBuffer[faces[i].vertices_index[1]];
+        faceVertices[2]= g_vertexBuffer[faces[i].vertices_index[2]];
 
         if(mode == SHADE_FLAT){
-	        shader.Flat.faceNorm= mat_mult_vec(&N,faces[i].faceNorm);
+	        shader.Flat.face_norm= mat_mult_vec(&N,faces[i].face_norm);
             rasterize_barycentricFlat(buffer,faceVertices,&shader.Flat);
         }
         else if(mode == SHADE_GOURAUD){
