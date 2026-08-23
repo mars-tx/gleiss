@@ -1,6 +1,5 @@
 #include <stdio.h>
-#include "../include/main.h"
-#include "../include/matrix.h"
+#include "../include/utils.h"
 #include "../include/shader.h"
 
 //Goes over entire vertex array, gives projected ones
