@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include "../include/matrix.h"
 #include "../include/obj.h"
 #include "../include/rasterizer.h"
 #include "../include/buffer.h"

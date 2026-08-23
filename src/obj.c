@@ -1,5 +1,5 @@
 #include <string.h>
-#include "../include/matrix.h"
+#include "../include/utils.h"
 #include "../include/obj.h"
 #include "../include/buffer.h"
 

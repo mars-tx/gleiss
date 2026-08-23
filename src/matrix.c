@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "../include/vector.h"
-#include "../include/matrix.h"
+#include "../include/utils.h"
 
 void mat_print(mat4* mat){
    for(int i= 0;i< 4;i++){

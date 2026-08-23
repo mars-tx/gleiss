@@ -2,7 +2,7 @@
 #define SHADER_H
 
 #include <stdint.h>
-#include "matrix.h"
+#include "utils.h"
 
 typedef enum{SHADE_FLAT,SHADE_GOURAUD}Shademode;
 

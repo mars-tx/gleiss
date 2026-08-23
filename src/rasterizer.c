@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-#include "../include/main.h"
+#include "../include/utils.h"
 #include "../include/vector.h"
 #include "../include/shader.h"
 #include "../include/buffer.h"

@@ -2,8 +2,7 @@
 #define OBJ_H
 
 #include <stdint.h>
-#include "vector.h"
-#include "matrix.h"
+#include "utils.h"
 #include "shader.h"
 #include "buffer.h"
 
