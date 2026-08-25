@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include "../include/utils.h"
+#include "../include/vector.h"
+#include "../include/matrix.h"
 #include "../include/shader.h"
 
 //Goes over entire vertex array, gives projected ones
-void vertex_FlatShader(VertexInput* inVertices,VertexOutput* outVertices,FlatShader* shader,int vertexCount){
+void vertex_FlatShader(
+        VertexInput* restrict inVertices,
+        VertexOutput* restrict outVertices,
+        FlatShader* restrict shader,int vertexCount){
 
     for (int i= 0;i< vertexCount;i++){
 
@@ -12,16 +17,18 @@ void vertex_FlatShader(VertexInput* inVertices,VertexOutput* outVertices,FlatSha
 
         //Color between 0-1
         float div= 1.0f/255.0f;
-        outVertices[i].vertexColor.r= ((inVertices[i].vertexColor>>24) & 0xff)*div;
-        outVertices[i].vertexColor.g= ((inVertices[i].vertexColor>>16) & 0xff)*div;
-        outVertices[i].vertexColor.b= ((inVertices[i].vertexColor>>8) & 0xff)*div;
-        outVertices[i].vertexColor.a= ((inVertices[i].vertexColor) & 0xff)*div;
+        outVertices[i].vertex_color.r= ((inVertices[i].vertex_color>>24) & 0xff)*div;
+        outVertices[i].vertex_color.g= ((inVertices[i].vertex_color>>16) & 0xff)*div;
+        outVertices[i].vertex_color.b= ((inVertices[i].vertex_color>>8) & 0xff)*div;
+        outVertices[i].vertex_color.a= ((inVertices[i].vertex_color) & 0xff)*div;
     }
 }
 
 //Will be called for each face
 //Early z testing will clear out unneeded calls
-uint32_t fragment_FlatShader(FlatShader* shader,Color vcolor1,Color vcolor2,Color vcolor3){
+uint32_t fragment_FlatShader(
+        FlatShader* shader,
+        Color vcolor1,Color vcolor2,Color vcolor3){
 
     float div= 255.0f/3.0f;
     float r= (vcolor1.r + vcolor2.r + vcolor3.r)*div;
@@ -30,22 +37,25 @@ uint32_t fragment_FlatShader(FlatShader* shader,Color vcolor1,Color vcolor2,Colo
     float a= (vcolor1.a + vcolor2.a + vcolor3.a)*div;
 
     float diffuse= vec3Dot(shader->face_norm,shader->light_dir);
-    float intensity= MAX(0.2f,MIN(diffuse,1));
+    float intensity= maxf(0.2f,minf(diffuse,1));
 
     r*= intensity;
     g*= intensity;
     b*= intensity;
 
-    uint8_t rr= (uint8_t)(MIN(r,255.0f));
-    uint8_t gg= (uint8_t)(MIN(g,255.0f));
-    uint8_t bb= (uint8_t)(MIN(b,255.0f));
-    uint8_t aa= (uint8_t)(MIN(a,255.0f));
+    uint8_t rr= (uint8_t)(minf(r,255.0f));
+    uint8_t gg= (uint8_t)(minf(g,255.0f));
+    uint8_t bb= (uint8_t)(minf(b,255.0f));
+    uint8_t aa= (uint8_t)(minf(a,255.0f));
 
     uint32_t flatColor= (rr<<24) | (gg<<16) | (bb<<8) | aa;
     return flatColor;
 }
 
-void vertex_GouraudShader(VertexInput* inVertices,VertexOutput* outVertices,GouraudShader* shader,int vertexCount){
+void vertex_GouraudShader(
+        VertexInput* restrict inVertices,
+        VertexOutput* restrict outVertices,
+        GouraudShader* restrict shader,int vertexCount){
 
     for (int i= 0;i< vertexCount;i++){
 
@@ -55,28 +65,30 @@ void vertex_GouraudShader(VertexInput* inVertices,VertexOutput* outVertices,Gour
 
         //Color between 0-1
         float div= 1.0f/255.0f;
-        outVertices[i].vertexColor.r= ((inVertices[i].vertexColor>>24) & 0xff)*div;
-        outVertices[i].vertexColor.g= ((inVertices[i].vertexColor>>16) & 0xff)*div;
-        outVertices[i].vertexColor.b= ((inVertices[i].vertexColor>>8) & 0xff)*div;
-        outVertices[i].vertexColor.a= ((inVertices[i].vertexColor) & 0xff)*div;
+        outVertices[i].vertex_color.r= ((inVertices[i].vertex_color>>24) & 0xff)*div;
+        outVertices[i].vertex_color.g= ((inVertices[i].vertex_color>>16) & 0xff)*div;
+        outVertices[i].vertex_color.b= ((inVertices[i].vertex_color>>8) & 0xff)*div;
+        outVertices[i].vertex_color.a= ((inVertices[i].vertex_color) & 0xff)*div;
     }
 }
 
 //Will be called for each pixel
-uint32_t fragment_GouraudShader(GouraudShader* shader,Color interp,float u1,float u2){
+uint32_t fragment_GouraudShader(
+        GouraudShader* shader,
+        Color interp,float u1,float u2){
 
     float diffuse= u1* (shader->i1 - shader->i3) + u2* (shader->i2 - shader->i3) + shader->i3;
-    diffuse= MAX(0.2f,MIN(diffuse,1.0f))*255.0f;
+    diffuse= maxf(0.2f,minf(diffuse,1.0f))*255.0f;
 
     interp.r*= diffuse;
     interp.g*= diffuse;
     interp.b*= diffuse;
     interp.a*= 255.0f;
 
-    uint8_t rr= (uint8_t)(MIN(interp.r,255.0f));
-    uint8_t gg= (uint8_t)(MIN(interp.g,255.0f));
-    uint8_t bb= (uint8_t)(MIN(interp.b,255.0f));
-    uint8_t aa= (uint8_t)(MIN(interp.a,255.0f));
+    uint8_t rr= (uint8_t)(minf(interp.r,255.0f));
+    uint8_t gg= (uint8_t)(minf(interp.g,255.0f));
+    uint8_t bb= (uint8_t)(minf(interp.b,255.0f));
+    uint8_t aa= (uint8_t)(minf(interp.a,255.0f));
 
     uint32_t color= (rr<<24) | (gg<<16) | (bb<<8) | aa;
     return color;

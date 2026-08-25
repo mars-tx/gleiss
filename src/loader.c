@@ -72,10 +72,10 @@ Mesh* load_Object(const char* filename, uint32_t defaultColor) {
 
             if (parsed == 7) {
                 //Per-vertex uint32_t RGBA
-                vertices[v_count].vertexColor = (r << 24) | (g << 16) | (b << 8) | a;
+                vertices[v_count].vertex_color = (r << 24) | (g << 16) | (b << 8) | a;
             } 
             else {
-                vertices[v_count].vertexColor = defaultColor;
+                vertices[v_count].vertex_color = defaultColor;
             }
 
             v_count++;

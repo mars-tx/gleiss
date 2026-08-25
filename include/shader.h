@@ -42,15 +42,15 @@ typedef struct{
 
 //Inside Mesh
 typedef struct{
-    uint32_t vertexColor;
     vec3 pos;
     vec3 norm;
     vec2 texture;
+    uint32_t vertex_color;
 
 }VertexInput;
 
 typedef struct{
-    Color vertexColor;
+    Color vertex_color;
     //vec3 clip_pos as z remains intact
     vec3 clipPos;
     //Transformed norm
@@ -61,12 +61,22 @@ typedef struct{
 
 }VertexOutput;
 
-void vertex_FlatShader(VertexInput* inVertices,VertexOutput* outVertices,FlatShader* shader,int vertexCount);
+void vertex_FlatShader(
+        VertexInput* restrict inVertices,
+        VertexOutput* restrict outVertices,
+        FlatShader* restrict shader,int vertexCount);
 
-void vertex_GouraudShader(VertexInput* inVertices,VertexOutput* outVertices,GouraudShader* shader,int vertexCount);
+void vertex_GouraudShader(
+        VertexInput* restrict inVertices,
+        VertexOutput* restrict outVertices,
+        GouraudShader* restrict shader,int vertexCount);
 
-uint32_t fragment_FlatShader(FlatShader* shader,Color vcolor1,Color vcolor2,Color vcolor3);
+uint32_t fragment_FlatShader(
+        FlatShader* shader,
+        Color vcolor1,Color vcolor2,Color vcolor3);
 
-uint32_t fragment_GouraudShader(GouraudShader* shader,Color interp,float u1,float u2);
+uint32_t fragment_GouraudShader(
+        GouraudShader* shader,
+        Color interp,float u1,float u2);
 
 #endif
