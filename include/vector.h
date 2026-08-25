@@ -2,14 +2,7 @@
 #define VECTOR_H
 
 #include "math.h"
-
-typedef struct{
-    int u,v;
-}vec2;
-
-typedef struct{
-    float x,y,z;
-}vec3;
+#include "utils.h"
 
 static inline vec3 vec3Sub(vec3 v1,vec3 v2){
     vec3 out;

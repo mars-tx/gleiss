@@ -1,4 +1,5 @@
 #include <string.h>
+#include <math.h>
 #include "../include/utils.h"
 #include "../include/obj.h"
 #include "../include/buffer.h"
@@ -50,7 +51,9 @@ void build_ModelMatrix(Object* obj) {
     obj->model= model_mat;
 }
 
-void build_NormalMatrix(mat4* norm_mat,mat4* model_mat){
+void build_NormalMatrix(
+        mat4* restrict norm_mat,
+        mat4* restrict model_mat){
 
     float (*m)[4]= model_mat->m;
 
@@ -60,7 +63,7 @@ void build_NormalMatrix(mat4* norm_mat,mat4* model_mat){
         +m[0][2]*(m[1][0] * m[2][1] - m[1][1] * m[2][0]);
 
     //0 determinant 
-    if (fabsf(det) < 0.0001f){
+    if (FABS(det) < 0.001f){
         memset(norm_mat, 0, sizeof(mat4));
         norm_mat->m[0][0] = norm_mat->m[1][1] = 
         norm_mat->m[2][2] = norm_mat->m[3][3] = 1.0f;
@@ -111,7 +114,7 @@ void build_ViewLookAtMatrix(Camera* cam){
              + view_mat.m[2][1]* view_mat.m[2][1] 
 	         + view_mat.m[2][2]* view_mat.m[2][2]);
 
-   if (magn> 0.0001f){
+   if (magn> 0.001f){
       magn= 1.0f/magn;
       view_mat.m[2][0]*= magn;
       view_mat.m[2][1]*= magn;
@@ -127,7 +130,7 @@ void build_ViewLookAtMatrix(Camera* cam){
 	         + view_mat.m[0][1]* view_mat.m[0][1] 
 	         + view_mat.m[0][2]* view_mat.m[0][2]);
 
-   if (magn> 0.0001f){
+   if (magn> 0.001f){
       magn= 1.0f/magn;
       view_mat.m[0][0]*= magn;
       view_mat.m[0][1]*= magn;
@@ -163,7 +166,9 @@ void build_ViewLookAtMatrix(Camera* cam){
 }
 
 //no w use yet but still have it
-void build_ProjectionMatrix(Camera* cam,Framebuffer* fb){
+void build_ProjectionMatrix(
+        Camera* restrict cam,
+        Framebuffer* restrict fb){
 
    mat4 projMat={0};
    float oot= 1.0f/tanf(cam->yFov/2.0f);

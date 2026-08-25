@@ -5,7 +5,10 @@
 #include "../include/shader.h"
 #include "../include/buffer.h"
 
-void rasterize_barycentricFlat(VertexOutput* vertices,FlatShader* shader,Framebuffer* restrict buf){
+void rasterize_barycentricFlat(
+        const VertexOutput* restrict vertices,
+        FlatShader* restrict shader,
+        Framebuffer* restrict buf){
 
     int WIDTH= buf->width,
         HEIGHT= buf->height;
@@ -43,20 +46,20 @@ void rasterize_barycentricFlat(VertexOutput* vertices,FlatShader* shader,Framebu
           r2= x13*det;
 
     //Color between 0-1
-    Color vcolor1= vertices[0].vertexColor;
-    Color vcolor2= vertices[1].vertexColor;
-    Color vcolor3= vertices[2].vertexColor;
+    Color vcolor1= vertices[0].vertex_color;
+    Color vcolor2= vertices[1].vertex_color;
+    Color vcolor3= vertices[2].vertex_color;
 
     uint32_t flatColor= fragment_FlatShader(shader,vcolor1,vcolor2,vcolor3);
 
     //Boundaries for rasterizer
     int xmax,xmin,ymax,ymin;
-    xmin= MAX(MIN(x1,MIN(x2,x3)),0);
-    xmax= MIN(WIDTH-1,MAX(x1,MAX(x2,x3)));
+    xmin= maxf(minf(x1,minf(x2,x3)),0);
+    xmax= minf(WIDTH-1,maxf(x1,maxf(x2,x3)));
     
-    ymin= MAX(MIN(y1,MIN(y2,y3)),0);
-    ymax= MIN(HEIGHT-1,MAX(y1,MAX(y2,y3)));
-
+    ymin= maxf(minf(y1,minf(y2,y3)),0);
+    ymax= minf(HEIGHT-1,maxf(y1,maxf(y2,y3)));
+    
     int xs3= xmin - x3, ys3= ymin - x3;
 
     float a= det*(y23*xs3 - x23*ys3);
@@ -87,7 +90,10 @@ void rasterize_barycentricFlat(VertexOutput* vertices,FlatShader* shader,Framebu
     }
 }
 
-void rasterize_barycentricGouraud(VertexOutput* vertices,GouraudShader* shader,Framebuffer* restrict buf){
+void rasterize_barycentricGouraud(
+        const VertexOutput* restrict vertices,
+        GouraudShader* restrict shader,
+        Framebuffer* restrict buf){
 
     int WIDTH= buf->width,
         HEIGHT= buf->height;
@@ -130,18 +136,18 @@ void rasterize_barycentricGouraud(VertexOutput* vertices,GouraudShader* shader,F
     shader->i3= vec3Dot(vertices[2].norm,shader->light_dir);
 
     //Color between 0-1
-    Color vcolor1= vertices[0].vertexColor;
-    Color vcolor2= vertices[1].vertexColor;
-    Color vcolor3= vertices[2].vertexColor;
+    Color vcolor1= vertices[0].vertex_color;
+    Color vcolor2= vertices[1].vertex_color;
+    Color vcolor3= vertices[2].vertex_color;
 
     //Boundaries for rasterizer
     int xmax,xmin,ymax,ymin;
-    xmin= MAX(MIN(x1,MIN(x2,x3)),0);
-    xmax= MIN(WIDTH-1,MAX(x1,MAX(x2,x3)));
+    xmin= maxf(minf(x1,minf(x2,x3)),0);
+    xmax= minf(WIDTH-1,maxf(x1,maxf(x2,x3)));
     
-    ymin= MAX(MIN(y1,MIN(y2,y3)),0);
-    ymax= MIN(HEIGHT-1,MAX(y1,MAX(y2,y3)));
-
+    ymin= maxf(minf(y1,minf(y2,y3)),0);
+    ymax= minf(HEIGHT-1,maxf(y1,maxf(y2,y3)));
+    
     int xs3= xmin - x3, ys3= ymin - x3;
 
     float a= det*(y23*xs3 - x23*ys3);
@@ -162,9 +168,15 @@ void rasterize_barycentricGouraud(VertexOutput* vertices,GouraudShader* shader,F
 
                     Color interp;
 		            //maybe replace by diffs
-                    interp.r= ((vcolor1.r - vcolor3.r)*u1 + (vcolor2.r - vcolor3.r)*u2 + vcolor3.r);
-                    interp.g= ((vcolor1.g - vcolor3.g)*u1 + (vcolor2.g - vcolor3.g)*u2 + vcolor3.g);
-                    interp.b= ((vcolor1.b - vcolor3.b)*u1 + (vcolor2.b - vcolor3.b)*u2 + vcolor3.b);
+                    interp.r= ((vcolor1.r - vcolor3.r)*u1 
+                            + (vcolor2.r - vcolor3.r)*u2 
+                            + vcolor3.r);
+                    interp.g= ((vcolor1.g - vcolor3.g)*u1 
+                            + (vcolor2.g - vcolor3.g)*u2 
+                            + vcolor3.g);
+                    interp.b= ((vcolor1.b - vcolor3.b)*u1 
+                            + (vcolor2.b - vcolor3.b)*u2 
+                            + vcolor3.b);
                     buf->pixels[loc]= fragment_GouraudShader(shader,interp,u1,u2);
                 }
             }
@@ -178,8 +190,12 @@ void rasterize_barycentricGouraud(VertexOutput* vertices,GouraudShader* shader,F
     }
 }
 
-void set_pixel(Framebuffer* restrict buf,int WIDTH,int x,int y,float ooz,uint32_t color){
-        int loc= y*WIDTH + x;
+void set_pixel(
+        Framebuffer* restrict buf,
+        int x,int y,float ooz,
+        uint32_t color){
+
+        int loc= y*buf->width + x;
         if (ooz> buf->z_buffer[loc]){
             buf->pixels[loc]= color;
             buf->z_buffer[loc]= ooz;

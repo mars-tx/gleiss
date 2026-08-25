@@ -32,7 +32,7 @@ typedef struct{
 
 void build_ModelMatrix(Object* obj);
 
-void build_NormalMatrix(mat4* norm_mat,mat4* model_mat);
+void build_NormalMatrix(mat4* restrict norm_mat,mat4* restrict model_mat);
 
 typedef struct{
     mat4 view;
@@ -50,6 +50,6 @@ typedef struct{
 
 void build_ViewLookAtMatrix(Camera* cam);
 
-void build_ProjectionMatrix(Camera* cam,Framebuffer* fb);
+void build_ProjectionMatrix(Camera* restrict cam,Framebuffer* restrict fb);
 
 #endif

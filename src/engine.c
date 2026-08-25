@@ -1,6 +1,6 @@
-#include "../include/engine.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "../include/engine.h"
 
 EngineContext* engine_create(int width, int height, const char* title) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
