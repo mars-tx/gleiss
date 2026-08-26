@@ -1,0 +1,23 @@
+# RGB Colored Pyramid Test
+# Format: v X Y Z R G B
+v  0.0  1.0  0.0  255 255 255  # Top apex (White)
+v -1.0 -1.0  1.0  255 0   0    # Front-left (Red)
+v  1.0 -1.0  1.0  0   255 0    # Front-right (Green)
+v  1.0 -1.0 -1.0  0   0   255  # Back-right (Blue)
+v -1.0 -1.0 -1.0  255 255 0    # Back-left (Yellow)
+
+# Base (Quad split into 2 triangles)
+f 2 3 4
+f 2 4 5
+
+# Front Face
+f 1 2 3
+
+# Right Face
+f 1 3 4
+
+# Back Face
+f 1 4 5
+
+# Left Face
+f 1 5 2
