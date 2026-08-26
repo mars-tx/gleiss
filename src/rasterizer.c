@@ -60,7 +60,7 @@ void rasterize_barycentricFlat(
     ymin= maxf(minf(y1,minf(y2,y3)),0);
     ymax= minf(HEIGHT-1,maxf(y1,maxf(y2,y3)));
     
-    int xs3= xmin - x3, ys3= ymin - x3;
+    int xs3= xmin - x3, ys3= ymin - y3;
 
     float a= det*(y23*xs3 - x23*ys3);
     float b= det*(-y13*xs3 + x13*ys3);
@@ -148,7 +148,7 @@ void rasterize_barycentricGouraud(
     ymin= maxf(minf(y1,minf(y2,y3)),0);
     ymax= minf(HEIGHT-1,maxf(y1,maxf(y2,y3)));
     
-    int xs3= xmin - x3, ys3= ymin - x3;
+    int xs3= xmin - x3, ys3= ymin - y3;
 
     float a= det*(y23*xs3 - x23*ys3);
     float b= det*(-y13*xs3 + x13*ys3);
