@@ -6,7 +6,6 @@
 static inline vec3 mat_mult_vec(const mat4* matrix,vec3 vec){
 
    vec3 result;
-
    result.x= matrix->m[0][0]*vec.x + matrix->m[0][1]*vec.y + matrix->m[0][2]*vec.z 
            + matrix->m[0][3];
    result.y= matrix->m[1][0]*vec.x + matrix->m[1][1]*vec.y + matrix->m[1][2]*vec.z 

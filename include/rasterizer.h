@@ -5,18 +5,18 @@
 #include "buffer.h"
 
 void rasterize_barycentricFlat(
-        const VertexOutput* restrict vertices,
-        FlatShader* restrict shader,
-        Framebuffer* restrict buf);
+        const VertexOutput* vertices,
+        FlatShader* shader,
+        Framebuffer* buf);
 
 void rasterize_barycentricGouraud(
-        const VertexOutput* restrict vertices,
-        GouraudShader* restrict shader,
-        Framebuffer* restrict buf);
+        const VertexOutput* vertices,
+        GouraudShader* shader,
+        Framebuffer* buf);
 
 
 void set_pixel(
-        Framebuffer* restrict buf,
+        Framebuffer* buf,
         int x,int y,float ooz,
         uint32_t color);
 

@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include "../include/engine.h"
 
-EngineContext* engine_create(int width, int height, const char* title) {
+EngineContext* create_Engine(int width, int height, const char* title) {
+
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         printf("SDL_Init Error: %s\n", SDL_GetError());
         return NULL;
@@ -49,7 +50,8 @@ EngineContext* engine_create(int width, int height, const char* title) {
     return engine;
 }
 
-void destroy_Engine(EngineContext* restrict engine) {
+void destroy_Engine(EngineContext* engine) {
+
     if (!engine) return;
     if (engine->framebuffer) free_Framebuffer(engine->framebuffer);
     if (engine->texture) SDL_DestroyTexture(engine->texture);
@@ -60,7 +62,8 @@ void destroy_Engine(EngineContext* restrict engine) {
 }
 
 //Push pixels[] to SDL3 texture & display
-void update_Engine(EngineContext* restrict engine) {
+void update_Engine(EngineContext* engine) {
+
     SDL_UpdateTexture(
         engine->texture, 
         NULL, 

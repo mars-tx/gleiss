@@ -1,14 +1,14 @@
-#include <stdint.h>
 #include <stdio.h>
+#include <stdint.h>
 #include "../include/utils.h"
 #include "../include/vector.h"
 #include "../include/shader.h"
 #include "../include/buffer.h"
 
 void rasterize_barycentricFlat(
-        const VertexOutput* restrict vertices,
-        FlatShader* restrict shader,
-        Framebuffer* restrict buf){
+        const VertexOutput* vertices,
+        FlatShader* shader,
+        Framebuffer* buf){
 
     int WIDTH= buf->width,
         HEIGHT= buf->height;
@@ -91,9 +91,9 @@ void rasterize_barycentricFlat(
 }
 
 void rasterize_barycentricGouraud(
-        const VertexOutput* restrict vertices,
-        GouraudShader* restrict shader,
-        Framebuffer* restrict buf){
+        const VertexOutput* vertices,
+        GouraudShader* shader,
+        Framebuffer* buf){
 
     int WIDTH= buf->width,
         HEIGHT= buf->height;
@@ -191,7 +191,7 @@ void rasterize_barycentricGouraud(
 }
 
 void set_pixel(
-        Framebuffer* restrict buf,
+        Framebuffer* buf,
         int x,int y,float ooz,
         uint32_t color){
 
