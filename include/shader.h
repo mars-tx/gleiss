@@ -15,6 +15,8 @@ typedef struct{
     //Per object
     mat4* PVM;
     mat4* M;
+    //Points to object colors
+    uint32_t* input_colors;
 
     vec3 light_dir;
     //Per face
@@ -27,6 +29,8 @@ typedef struct{
     mat4* PVM;
     mat4* M;
     mat4* N;
+    //Points to object colors
+    uint32_t* input_colors;
 
     vec3 light_dir;
     //Per face vertices
@@ -45,7 +49,6 @@ typedef struct{
     vec3 pos;
     vec3 norm;
     vec2 texture;
-    uint32_t vertex_color;
 
 }VertexInput;
 
@@ -62,14 +65,14 @@ typedef struct{
 }VertexOutput;
 
 void vertex_FlatShader(
-        VertexInput* restrict inVertices,
-        VertexOutput* restrict outVertices,
-        FlatShader* restrict shader,int vertexCount);
+        VertexInput* inVertices,
+        VertexOutput* outVertices,
+        FlatShader* shader,int vertexCount);
 
 void vertex_GouraudShader(
-        VertexInput* restrict inVertices,
-        VertexOutput* restrict outVertices,
-        GouraudShader* restrict shader,int vertexCount);
+        VertexInput* inVertices,
+        VertexOutput* outVertices,
+        GouraudShader* shader,int vertexCount);
 
 uint32_t fragment_FlatShader(
         FlatShader* shader,
