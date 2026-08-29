@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "../include/utils.h"
 #include "../include/vector.h"
 #include "../include/matrix.h"
@@ -6,9 +7,9 @@
 
 //Goes over entire vertex array, gives projected ones
 void vertex_FlatShader(
-        VertexInput* restrict inVertices,
-        VertexOutput* restrict outVertices,
-        FlatShader* restrict shader,int vertexCount){
+        VertexInput* inVertices,
+        VertexOutput* outVertices,
+        FlatShader* shader,int vertexCount){
 
     for (int i= 0;i< vertexCount;i++){
 
@@ -17,10 +18,11 @@ void vertex_FlatShader(
 
         //Color between 0-1
         float div= 1.0f/255.0f;
-        outVertices[i].vertex_color.r= ((inVertices[i].vertex_color>>24) & 0xff)*div;
-        outVertices[i].vertex_color.g= ((inVertices[i].vertex_color>>16) & 0xff)*div;
-        outVertices[i].vertex_color.b= ((inVertices[i].vertex_color>>8) & 0xff)*div;
-        outVertices[i].vertex_color.a= ((inVertices[i].vertex_color) & 0xff)*div;
+        uint32_t vertex_color= shader->input_colors[i];
+        outVertices[i].vertex_color.r= ((vertex_color>>24) & 0xff)*div;
+        outVertices[i].vertex_color.g= ((vertex_color>>16) & 0xff)*div;
+        outVertices[i].vertex_color.b= ((vertex_color>>8) & 0xff)*div;
+        outVertices[i].vertex_color.a= ((vertex_color) & 0xff)*div;
     }
 }
 
@@ -53,9 +55,9 @@ uint32_t fragment_FlatShader(
 }
 
 void vertex_GouraudShader(
-        VertexInput* restrict inVertices,
-        VertexOutput* restrict outVertices,
-        GouraudShader* restrict shader,int vertexCount){
+        VertexInput* inVertices,
+        VertexOutput* outVertices,
+        GouraudShader* shader,int vertexCount){
 
     for (int i= 0;i< vertexCount;i++){
 
@@ -65,10 +67,11 @@ void vertex_GouraudShader(
 
         //Color between 0-1
         float div= 1.0f/255.0f;
-        outVertices[i].vertex_color.r= ((inVertices[i].vertex_color>>24) & 0xff)*div;
-        outVertices[i].vertex_color.g= ((inVertices[i].vertex_color>>16) & 0xff)*div;
-        outVertices[i].vertex_color.b= ((inVertices[i].vertex_color>>8) & 0xff)*div;
-        outVertices[i].vertex_color.a= ((inVertices[i].vertex_color) & 0xff)*div;
+        uint32_t vertex_color= shader->input_colors[i];
+        outVertices[i].vertex_color.r= ((vertex_color>>24) & 0xff)*div;
+        outVertices[i].vertex_color.g= ((vertex_color>>16) & 0xff)*div;
+        outVertices[i].vertex_color.b= ((vertex_color>>8) & 0xff)*div;
+        outVertices[i].vertex_color.a= ((vertex_color) & 0xff)*div;
     }
 }
 
