@@ -23,6 +23,7 @@ typedef struct{
 
 typedef struct{
     Mesh* mesh_data;
+    uint32_t* vertex_colors;
 
     mat4 model;
     vec3 position;
@@ -32,7 +33,7 @@ typedef struct{
 
 void build_ModelMatrix(Object* obj);
 
-void build_NormalMatrix(mat4* restrict norm_mat,mat4* restrict model_mat);
+void build_NormalMatrix(mat4* norm_mat,mat4* model_mat);
 
 typedef struct{
     mat4 view;
@@ -50,6 +51,6 @@ typedef struct{
 
 void build_ViewLookAtMatrix(Camera* cam);
 
-void build_ProjectionMatrix(Camera* restrict cam,Framebuffer* restrict fb);
+void build_ProjectionMatrix(Camera* cam,Framebuffer* fb);
 
 #endif

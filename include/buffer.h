@@ -21,8 +21,8 @@ typedef struct{
 
 Framebuffer* create_Framebuffer(int width, int height);
 
-void free_Framebuffer(Framebuffer* restrict fb);
+void free_Framebuffer(Framebuffer* fb);
 
-void clear_Framebuffer(Framebuffer* restrict fb, uint32_t color);
+void clear_Framebuffer(Framebuffer* fb, uint32_t color);
 
 #endif

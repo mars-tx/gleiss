@@ -13,12 +13,13 @@ typedef struct {
     int width;
     int height;
     bool isRunning;
+
 } EngineContext;
 
 EngineContext* create_Engine(int width, int height, const char* title);
 
-void destroy_Engine(EngineContext* restrict engine);
+void destroy_Engine(EngineContext* engine);
 
-void update_Engine(EngineContext* restrict engine);
+void update_Engine(EngineContext* engine);
 
 #endif
