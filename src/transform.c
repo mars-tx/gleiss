@@ -24,21 +24,21 @@ void build_ModelMatrix(Object* obj) {
     float cz= cosf(az); float sz= sinf(az);
 
     //R1
-    model_mat->m[0][0]= (cy * cz) * scale.x;
-    model_mat->m[0][1]= (sx * sy * cz - cx * sz) * scale.y;
-    model_mat->m[0][2]= (cx * sy * cz + sx * sz) * scale.z;
+    model_mat->m[0][0]= (cy * cz)* scale.x;
+    model_mat->m[0][1]= (sx * sy * cz - cx * sz)* scale.y;
+    model_mat->m[0][2]= (cx * sy * cz + sx * sz)* scale.z;
     model_mat->m[0][3]= pos.x;
 
     //R2
-    model_mat->m[1][0]= (cy * sz) * scale.x;
-    model_mat->m[1][1]= (sx * sy * sz + cx * cz) * scale.y;
-    model_mat->m[1][2]= (cx * sy * sz - sx * cz) * scale.z;
+    model_mat->m[1][0]= (cy * sz)* scale.x;
+    model_mat->m[1][1]= (sx * sy * sz + cx * cz)* scale.y;
+    model_mat->m[1][2]= (cx * sy * sz - sx * cz)* scale.z;
     model_mat->m[1][3]= pos.y;
 
     //R3
-    model_mat->m[2][0]= (-sy) * scale.x;
-    model_mat->m[2][1]= (sx * cy) * scale.y;
-    model_mat->m[2][2]= (cx * cy) * scale.z;
+    model_mat->m[2][0]= (-sy)* scale.x;
+    model_mat->m[2][1]= (sx * cy)* scale.y;
+    model_mat->m[2][2]= (cx * cy)* scale.z;
     model_mat->m[2][3]= pos.z;
 
     //R4
@@ -55,9 +55,9 @@ void build_NormalMatrix(
     float (*m)[4]= model_mat->m;
 
     float det;
-    det= m[0][0]*(m[1][1] * m[2][2] - m[1][2] * m[2][1])
-        -m[0][1]*(m[1][2] * m[2][0] - m[1][0] * m[2][2]) //sign    
-        +m[0][2]*(m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+    det= m[0][0]*(m[1][1]* m[2][2] - m[1][2]* m[2][1])
+        -m[0][1]*(m[1][2]* m[2][0] - m[1][0]* m[2][2]) //sign    
+        +m[0][2]*(m[1][0]* m[2][1] - m[1][1]* m[2][0]);
 
     //0 determinant 
     if (FABS(det) < 0.001f){
@@ -69,21 +69,21 @@ void build_NormalMatrix(
 
     det = 1.0f / det;
     // Row 1 of Normal Matrix 
-    norm_mat->m[0][0]= (m[1][1] * m[2][2] - m[1][2] * m[2][1]) * det;
-    norm_mat->m[0][1]= (m[1][2] * m[2][0] - m[1][0] * m[2][2]) * det;
-    norm_mat->m[0][2]= (m[1][0] * m[2][1] - m[1][1] * m[2][0]) * det;
+    norm_mat->m[0][0]= (m[1][1]* m[2][2] - m[1][2]* m[2][1])* det;
+    norm_mat->m[0][1]= (m[1][2]* m[2][0] - m[1][0]* m[2][2])* det;
+    norm_mat->m[0][2]= (m[1][0]* m[2][1] - m[1][1]* m[2][0])* det;
     norm_mat->m[0][3]= 0;
 
     // Row 2 of Normal Matrix 
-    norm_mat->m[1][0]= (m[0][2] * m[2][1] - m[0][1] * m[2][2]) * det; 
-    norm_mat->m[1][1]= (m[0][0] * m[2][2] - m[0][2] * m[2][0]) * det;
-    norm_mat->m[1][2]= (m[0][1] * m[2][0] - m[0][0] * m[2][1]) * det; 
+    norm_mat->m[1][0]= (m[0][2]* m[2][1] - m[0][1]* m[2][2])* det; 
+    norm_mat->m[1][1]= (m[0][0]* m[2][2] - m[0][2]* m[2][0])* det;
+    norm_mat->m[1][2]= (m[0][1]* m[2][0] - m[0][0]* m[2][1])* det; 
     norm_mat->m[1][3]= 0;
 
     // Row 3 of Normal Matrix 
-    norm_mat->m[2][0]= (m[0][1] * m[1][2] - m[0][2] * m[1][1]) * det;
-    norm_mat->m[2][1]= (m[0][2] * m[1][0] - m[0][0] * m[1][2]) * det; 
-    norm_mat->m[2][2]= (m[0][0] * m[1][1] - m[0][1] * m[1][0]) * det;
+    norm_mat->m[2][0]= (m[0][1]* m[1][2] - m[0][2]* m[1][1])* det;
+    norm_mat->m[2][1]= (m[0][2]* m[1][0] - m[0][0]* m[1][2])* det; 
+    norm_mat->m[2][2]= (m[0][0]* m[1][1] - m[0][1]* m[1][0])* det;
     norm_mat->m[2][3]= 0;
 
     // Row 4 of Normal Matrix 
