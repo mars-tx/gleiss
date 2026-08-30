@@ -14,7 +14,6 @@ typedef struct{
 typedef struct{
     //Per object
     mat4* PVM;
-    mat4* M;
     //Points to object colors
     uint32_t* input_colors;
 
@@ -27,7 +26,6 @@ typedef struct{
 typedef struct{
     //Per object
     mat4* PVM;
-    mat4* M;
     mat4* N;
     //Points to object colors
     uint32_t* input_colors;
@@ -59,7 +57,6 @@ typedef struct{
     //Transformed norm
     vec3 norm;
 
-    vec3 worldPos;
     vec2 texture;
 
 }VertexOutput;
