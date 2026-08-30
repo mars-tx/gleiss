@@ -5,12 +5,13 @@
 
 typedef struct {
     Mesh* meshes;
-    int mesh_count;
-
     Object* objects;
-    int object_count;
 
+    mat4 ProjectionView;
     Camera camera;
+
+    int mesh_count;
+    int object_count;
 
 }Scene;
 

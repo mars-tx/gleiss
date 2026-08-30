@@ -75,7 +75,7 @@ void rasterize_barycentricFlat(
                 //Interpolating z
                 z_inv_pixel= z_inv.x*u1 + z_inv.y*u2 + z_inv.z*u3;
                 loc= ys*WIDTH + xs;
-                if(z_inv_pixel> buf->z_buffer[loc]){
+                if(z_inv_pixel > buf->z_buffer[loc]){
                     buf->z_buffer[loc]= z_inv_pixel;
                     buf->pixels[loc]= flatColor;
                 }
@@ -163,20 +163,19 @@ void rasterize_barycentricGouraud(
                 //Interpolating z
                 z_inv_pixel= z_inv.x*u1 + z_inv.y*u2 + z_inv.z*u3;
                 loc= ys*WIDTH + xs;
-                if(z_inv_pixel> buf->z_buffer[loc]){
+                if(z_inv_pixel > buf->z_buffer[loc]){
                     buf->z_buffer[loc]= z_inv_pixel;
 
                     Color interp;
-		            //maybe replace by diffs
-                    interp.r= ((vcolor1.r - vcolor3.r)*u1 
+                    interp.r= (vcolor1.r - vcolor3.r)*u1 
                             + (vcolor2.r - vcolor3.r)*u2 
-                            + vcolor3.r);
-                    interp.g= ((vcolor1.g - vcolor3.g)*u1 
+                            + (vcolor3.r);
+                    interp.g= (vcolor1.g - vcolor3.g)*u1 
                             + (vcolor2.g - vcolor3.g)*u2 
-                            + vcolor3.g);
-                    interp.b= ((vcolor1.b - vcolor3.b)*u1 
+                            + (vcolor3.g);
+                    interp.b= (vcolor1.b - vcolor3.b)*u1 
                             + (vcolor2.b - vcolor3.b)*u2 
-                            + vcolor3.b);
+                            + (vcolor3.b);
                     buf->pixels[loc]= fragment_GouraudShader(shader,interp,u1,u2);
                 }
             }
