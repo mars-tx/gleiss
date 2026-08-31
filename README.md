@@ -1,6 +1,5 @@
-<div style="background-color: #fff3cd; color: #856404; padding: 12px; border-left: 5px solid #ffeeba; margin-bottom: 20px;">
-  ⚠️ <strong>Note:</strong> This project is still under development.
-</div>
+> [!WARNING]
+> This project is still under development and may have some bugs.
 
 # Software 3D Renderer
 

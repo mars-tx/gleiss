@@ -38,11 +38,11 @@ uint32_t fragment_FlatShader(
     float a= (vcolor1.a + vcolor2.a + vcolor3.a)*div;
 
     float diffuse= vec3Dot(shader->face_norm,shader->light_dir);
-    float intensity= maxf(0.2f,minf(diffuse,1.0f));
+    diffuse= maxf(0.2f,minf(diffuse,1.0f));
 
-    r*= intensity;
-    g*= intensity;
-    b*= intensity;
+    r*= diffuse;
+    g*= diffuse;
+    b*= diffuse;
 
     uint8_t rr= (uint8_t)(minf(r,255.0f));
     uint8_t gg= (uint8_t)(minf(g,255.0f));
