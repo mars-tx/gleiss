@@ -1,8 +1,8 @@
-#include <stdint.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include "../include/vector.h"
-#include "../include/Scene.h"
+#include "../include/scene.h"
 
 #define MAX_VERTICES 10000
 

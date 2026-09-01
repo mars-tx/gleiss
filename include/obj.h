@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include "utils.h"
 #include "shader.h"
-#include "buffer.h"
 
 typedef struct{
     int vertices_index[3];
@@ -29,11 +28,8 @@ typedef struct{
     vec3 position;
     vec3 scale;
     vec3 rot;
+
 }Object;
-
-void build_ModelMatrix(Object* obj);
-
-void build_NormalMatrix(mat4* norm_mat,mat4* model_mat);
 
 typedef struct{
     mat4 view;
@@ -48,9 +44,5 @@ typedef struct{
     float yFov;
 
 }Camera;
-
-void build_ViewLookAtMatrix(Camera* cam);
-
-void build_ProjectionMatrix(Camera* cam,Framebuffer* fb);
 
 #endif
