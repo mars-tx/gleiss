@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "scene.h"
-#include "buffer.h"
+#include "engine.h"
 
 typedef struct {
     Shademode mode;
@@ -13,7 +13,7 @@ typedef struct {
 }RenderContext;
 
 bool render_Scene(
-        Framebuffer* buffer,
+        EngineContext* engine,
         Scene* scene,
         vec3 light_dir,Shademode mode);
 

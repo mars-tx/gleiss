@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../include/buffer.h"
 #include "../include/engine.h"
 
 EngineContext* create_Engine(int width, int height, const char* title) {

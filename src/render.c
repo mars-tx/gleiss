@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "../include/matrix.h"
-#include "../include/scene.h"
+#include "../include/transform.h"
 #include "../include/rasterizer.h"
-#include "../include/buffer.h"
+#include "../include/scene.h"
+#include "../include/engine.h"
 
 #define MAX_RENDER_VERTICES 10000
 static VertexOutput g_vertexBuffer[MAX_RENDER_VERTICES];
@@ -15,14 +16,15 @@ static int clip_NearPlane(VertexOutput f_vertices[2][3]);
 static inline VertexOutput interp_Vertex(VertexOutput v1, VertexOutput v2);
 
 bool render_Scene(
-        Framebuffer* buffer,
+        EngineContext* engine,
         Scene* scene,
         vec3 light_dir, Shademode mode) {
 
-    if (!scene || !buffer) {
+    if (!scene || !engine) {
         fprintf(stderr, "Error: Null pointer passed\n");
         return false;
     }
+    Framebuffer* buffer = engine->framebuffer;
 
     mat4* PV = &scene->ProjectionView;
 

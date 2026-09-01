@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include <SDL3/SDL.h>
-#include "../include/engine.h"
-#include "../include/scene.h"
-#include "../include/matrix.h"
+#include "../include/transform.h"
 #include "../include/render.h"
 #include "../include/buffer.h"
+#include "../include/scene.h"
+#include "../include/engine.h"
 
 int main(int argc, char* argv[]) {
 
@@ -31,15 +30,13 @@ int main(int argc, char* argv[]) {
             }
         }
 
-
         clear_Framebuffer(engine->framebuffer, 0x000000FF);
 
-        build_ViewLookAtMatrix(&scene->camera);
-        build_ProjectionMatrix(&scene->camera, engine->framebuffer);
+        build_ViewLookAtMatrix(scene);
+        build_ProjectionMatrix(engine, scene);
+        build_ProjectionViewMatrix(scene);
         
-        mat_mult_mat(&scene->camera.projection, &scene->camera.view, &scene->ProjectionView);
-
-        render_Scene(engine->framebuffer, scene, lightDir, SHADE_GOURAUD);
+        render_Scene(engine, scene, lightDir, SHADE_GOURAUD);
 
         update_Engine(engine);
     }
