@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../include/buffer.h"
 
 Framebuffer* create_Framebuffer(int width, int height){
