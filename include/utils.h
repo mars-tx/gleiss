@@ -12,6 +12,14 @@ static inline float minf(float a, float b){
     return (a < b) ? a : b;
 }
 
+static inline int maxi(int a, int b){
+    return (a > b) ? a : b;
+}
+
+static inline int mini(int a, int b){
+    return (a < b) ? a : b;
+}
+
 #define FABS(x)    (((x)< 0.0f)? (-x) : (x))
 
 // Type definitions
