@@ -29,10 +29,7 @@ typedef struct{
     mat4* N;
     //Points to object colors
     uint32_t* input_colors;
-
     vec3 light_dir;
-    //Per face vertices
-    float i1,i2,i3;
 
 }GouraudShader;
 
@@ -51,13 +48,12 @@ typedef struct{
 }VertexInput;
 
 typedef struct{
-    Color vertex_color;
     //vec3 clip_pos as z remains intact
-    vec3 clipPos;
+    vec3 clip_pos;
     //Transformed norm
     vec3 norm;
-
     vec2 texture;
+    uint32_t vertex_color;
 
 }VertexOutput;
 
@@ -72,11 +68,9 @@ void vertex_GouraudShader(
         GouraudShader* shader,int vertexCount);
 
 uint32_t fragment_FlatShader(
-        FlatShader* shader,
-        Color vcolor1,Color vcolor2,Color vcolor3);
+        float intensity,
+        uint32_t vcolor1,uint32_t vcolor2,uint32_t vcolor3);
 
-uint32_t fragment_GouraudShader(
-        GouraudShader* shader,
-        Color interp,float u1,float u2);
+uint32_t fragment_GouraudShader(Color interp,float diffuse);
 
 #endif

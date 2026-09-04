@@ -1,2 +1,4 @@
 .clangd
-./demo
+Makefile
+build/
+demo

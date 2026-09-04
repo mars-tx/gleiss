@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "../include/utils.h"
-#include "../include/vector.h"
 #include "../include/matrix.h"
 #include "../include/shader.h"
 
@@ -13,44 +12,35 @@ void vertex_FlatShader(
 
     for (int i= 0;i< vertexCount;i++){
 
-        //outVertices[i].worldPos= mat_mult_vec(shader->M,inVertices[i].pos);
-        outVertices[i].clipPos= mat_mult_vec(shader->PVM,inVertices[i].pos);
+        //outVertices[i].world_pos= mat_mult_vec(shader->M,inVertices[i].pos);
+        outVertices[i].clip_pos= mat_mult_vec(shader->PVM,inVertices[i].pos);
 
         //Color between 0-255
-        uint32_t vertex_color= shader->input_colors[i];
-        outVertices[i].vertex_color.r= ((vertex_color>>24) & 0xff);
-        outVertices[i].vertex_color.g= ((vertex_color>>16) & 0xff);
-        outVertices[i].vertex_color.b= ((vertex_color>>8) & 0xff);
-        outVertices[i].vertex_color.a= ((vertex_color) & 0xff);
+        outVertices[i].vertex_color= shader->input_colors[i];
     }
 }
 
 //Will be called for each face
 //Early z testing will clear out unneeded calls
 uint32_t fragment_FlatShader(
-        FlatShader* shader,
-        Color vcolor1,Color vcolor2,Color vcolor3){
+        float intensity,
+        uint32_t vcolor1,uint32_t vcolor2,uint32_t vcolor3){
 
-    float div= 1.0f/3.0f;
-    float r= (vcolor1.r + vcolor2.r + vcolor3.r)*div;
-    float g= (vcolor1.g + vcolor2.g + vcolor3.g)*div;
-    float b= (vcolor1.b + vcolor2.b + vcolor3.b)*div;
-    float a= (vcolor1.a + vcolor2.a + vcolor3.a)*div;
+    uint32_t r= ((vcolor1>>24 & 0xFF) + (vcolor2>>24 & 0xFF) + (vcolor3>>24 & 0xFF));
+    uint32_t g= ((vcolor1>>16 & 0xFF) + (vcolor2>>16 & 0xFF) + (vcolor3>>16 & 0xFF));
+    uint32_t b= ((vcolor1>>8 & 0xFF) + (vcolor2>>8 & 0xFF) + (vcolor3>>8 & 0xFF));
+    uint32_t a= ((vcolor1 & 0xFF) + (vcolor2 & 0xFF) + (vcolor3 & 0xFF));
 
-    float diffuse= vec3Dot(shader->face_norm,shader->light_dir);
-    diffuse= maxf(0.2f,minf(diffuse,1.0f));
+    intensity= maxf(0.2f,intensity)/3.0f;
 
-    r*= diffuse;
-    g*= diffuse;
-    b*= diffuse;
+    uint32_t rr= (uint32_t)(minf(r*intensity,255.0f));
+    uint32_t gg= (uint32_t)(minf(g*intensity,255.0f));
+    uint32_t bb= (uint32_t)(minf(b*intensity,255.0f));
+    uint32_t aa= (uint32_t)(minf(a/3.0f,255.0f));
 
-    uint8_t rr= (uint8_t)(minf(r,255.0f));
-    uint8_t gg= (uint8_t)(minf(g,255.0f));
-    uint8_t bb= (uint8_t)(minf(b,255.0f));
-    uint8_t aa= (uint8_t)(minf(a,255.0f));
+    printf("%d %d %d %d \n",rr,gg,bb,aa);
 
-    uint32_t flatColor= (rr<<24) | (gg<<16) | (bb<<8) | aa;
-    return flatColor;
+    return (rr<<24) | (gg<<16) | (bb<<8) | aa;
 }
 
 void vertex_GouraudShader(
@@ -60,35 +50,27 @@ void vertex_GouraudShader(
 
     for (int i= 0;i< vertexCount;i++){
 
-        //outVertices[i].worldPos= mat_mult_vec(shader->M,inVertices[i].pos);
-        outVertices[i].clipPos= mat_mult_vec(shader->PVM,inVertices[i].pos);
+        //outVertices[i].world_pos= mat_mult_vec(shader->M,inVertices[i].pos);
+        outVertices[i].clip_pos= mat_mult_vec(shader->PVM,inVertices[i].pos);
 	    outVertices[i].norm= mat_mult_vec(shader->N,inVertices[i].norm);
 
         //Color between 0-255
-        uint32_t vertex_color= shader->input_colors[i];
-        outVertices[i].vertex_color.r= ((vertex_color>>24) & 0xff);
-        outVertices[i].vertex_color.g= ((vertex_color>>16) & 0xff);
-        outVertices[i].vertex_color.b= ((vertex_color>>8) & 0xff);
-        outVertices[i].vertex_color.a= ((vertex_color) & 0xff);
+        outVertices[i].vertex_color= shader->input_colors[i];
     }
 }
 
 //Will be called for each pixel
-uint32_t fragment_GouraudShader(
-        GouraudShader* shader,
-        Color interp,float u1,float u2){
+uint32_t fragment_GouraudShader(Color interp,float diffuse){
 
-    float diffuse= u1* (shader->i1 - shader->i3) + u2* (shader->i2 - shader->i3) + shader->i3;
-    diffuse= maxf(0.2f,minf(diffuse,1.0f));
+    diffuse= minf(diffuse,1.0f);
+    diffuse= maxf(0.2f,diffuse);
 
-    interp.r*= diffuse;
-    interp.g*= diffuse;
-    interp.b*= diffuse;
+    uint32_t rr= (uint32_t)(minf(interp.r*diffuse,255.0f));
+    uint32_t gg= (uint32_t)(minf(interp.g*diffuse,255.0f));
+    uint32_t bb= (uint32_t)(minf(interp.b*diffuse,255.0f));
+    uint32_t aa= (uint32_t)(minf(interp.a,255.0f));
 
-    uint8_t rr= (uint8_t)(minf(interp.r,255.0f));
-    uint8_t gg= (uint8_t)(minf(interp.g,255.0f));
-    uint8_t bb= (uint8_t)(minf(interp.b,255.0f));
-    uint8_t aa= (uint8_t)(minf(interp.a,255.0f));
+    printf("%d %d %d %d \n",rr,gg,bb,aa);
 
     uint32_t color= (rr<<24) | (gg<<16) | (bb<<8) | aa;
     return color;
