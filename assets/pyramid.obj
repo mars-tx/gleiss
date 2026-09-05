@@ -1,17 +1,14 @@
-# --- HEADER ---
-# MeshCount, ObjectCount
 1 2
 
-# --- MESHES ---
-# VertexCount, FaceCount
+
 5 6
-# Vertices
+
  0.0  1.0  0.0
 -1.0 -1.0  1.0
  1.0 -1.0  1.0
  1.0 -1.0 -1.0
 -1.0 -1.0 -1.0
-# Faces
+
 2 3 4
 2 4 5
 1 2 3
@@ -19,25 +16,26 @@
 1 4 5
 1 5 2
 
-# --- OBJECTS ---
-# Object 0: MeshIdx, Pos, Rot, Scale
+
+
+
 0  -2.0 0.0 4.0  0.0 0.0 0.0  1.0 1.0 1.0
-# Colors for 5 vertices
+
 255 255 255
-255   0   0
-  0 255   0
-  0   0 255
-255 255   0
+255 0 0
+0 255 0
+0 0 255
+255 255 0
 
-# Object 1: MeshIdx, Pos, Rot, Scale
 0  3.0 1.0 5.0  0.0 0.0 0.0  1.5 1.5 1.5
-# Colors for 5 vertices
-  0 255 255
-255   0 255
-255 128   0
-128   0 128
-  0 255 128
 
-# --- CAMERA ---
-# Pos, Target, Global, FOV
+0 255 255
+255 0 255
+255 128 0
+128 0 128
+0 255 128
+
+
+
+
 0.0 1.0 -5.0  1.0 0.0 1.0  0.0 1.0 0.0  1.5708
