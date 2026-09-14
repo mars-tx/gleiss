@@ -1,8 +1,13 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "math.h"
+#include <math.h>
+#include <stdio.h>
 #include "utils.h"
+
+static inline void vec_print(vec3 v){
+    printf("%f %f %f\n",v.x,v.y,v.z);
+}
 
 static inline vec3 vec3Sub(vec3 v1,vec3 v2){
     vec3 out;

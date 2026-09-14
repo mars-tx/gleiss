@@ -1,6 +1,8 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#define MAX_RENDER_VERTICES 10000
+
 #include "obj.h"
 
 typedef struct {
