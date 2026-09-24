@@ -4,14 +4,12 @@
 #include "../include/vector.h"
 #include "../include/scene.h"
 
-#define MAX_VERTICES 10000
+static void set_MeshFacesNormal(Mesh* in_mesh) {
+    int num= in_mesh->face_count;
+    VertexInput* vertices= in_mesh->vertices;
+    Face* faces= in_mesh->faces;
 
-static void set_MeshFacesNormal(Mesh* inMesh) {
-    int num= inMesh->face_count;
-    VertexInput* vertices= inMesh->vertices;
-    Face* faces= inMesh->faces;
-
-    for (int i= 0; i < num; i++) {
+    for (int i= 0; i< num; i++) {
         vec3 v1= vertices[faces[i].vertices_index[0]].pos;
         vec3 v2= vertices[faces[i].vertices_index[1]].pos;
         vec3 v3= vertices[faces[i].vertices_index[2]].pos;
@@ -23,9 +21,9 @@ static void set_MeshFacesNormal(Mesh* inMesh) {
     }
 }
 
-static void set_MeshVerticesNormal(Mesh* inMesh){
-    int num= inMesh->vertex_count;
-    VertexInput* vertices= inMesh->vertices;
+static void set_MeshVerticesNormal(Mesh* in_mesh){
+    int num= in_mesh->vertex_count;
+    VertexInput* vertices= in_mesh->vertices;
     for (int i= 0;i< num;i++){
 
         vertices[i].norm= vec3Normalize(vertices[i].pos);
@@ -71,13 +69,14 @@ Scene* load_Scene(const char* filename){
             return NULL;
         }
 
-        if (v_count <= 0 || f_count <= 0 || v_count > MAX_VERTICES){
+        if (v_count <= 0 || f_count <= 0 || v_count > MAX_RENDER_VERTICES){
             fprintf(stderr, "Error: Invalid vertex or face count!\n");
             fclose(file);
             free_Scene(scene);
             return NULL;
         }
 
+        //Vertex input
         VertexInput* vertices= malloc(v_count * sizeof(VertexInput));
         for (int i= 0; i < v_count; i++) {
 
@@ -90,6 +89,7 @@ Scene* load_Scene(const char* filename){
             vertices[i].norm= (vec3){0, 0, 0};
         }
 
+        //Face input
         Face* faces= malloc(f_count * sizeof(Face));
         for (int i= 0; i < f_count; i++) {
 
@@ -135,30 +135,33 @@ Scene* load_Scene(const char* filename){
         scene->objects[o].rot= (vec3){rx, ry, rz};
         scene->objects[o].scale= (vec3){sx, sy, sz};
 
+        //Color input
         int v_cnt= scene->meshes[mesh_idx].vertex_count;
         uint32_t* colors= malloc(v_cnt * sizeof(uint32_t));
+
         for (int i= 0; i < v_cnt; i++) {
 
-            uint8_t r, g, b;
-            read_values= fscanf(file, "%hhu %hhu %hhu", &r, &g, &b);
+            uint32_t r, g, b;
+            //Decimal
+            read_values= fscanf(file, "%u %u %u", &r, &g, &b);
             if (read_values != 3){
                 fclose(file);
                 free_Scene(scene);
                 return NULL;
             }
-            colors[i]= ((uint32_t)r << 24) | ((uint32_t)g << 16) | ((uint32_t)b << 8) | 0xFF;
+            colors[i]= (r << 24) | (g << 16) | (b << 8) | 0xFF;
         }
         scene->objects[o].vertex_colors= colors;
     }
 
     //Load Camera
-    read_values= fscanf(file, "%f %f %f %f %f %f %f %f %f %f",
+    read_values= fscanf(file, "%f %f %f %f %f %f %f %f %f",
            &scene->camera.position.x, &scene->camera.position.y, &scene->camera.position.z,
-           &scene->camera.target.x, &scene->camera.target.y, &scene->camera.target.z,
+           &scene->camera.pitch, &scene->camera.yaw,
            &scene->camera.global.x, &scene->camera.global.y, &scene->camera.global.z,
            &scene->camera.yFov);
 
-    if (read_values != 10){
+    if (read_values != 9){
         fclose(file);
         free_Scene(scene);
         return NULL;

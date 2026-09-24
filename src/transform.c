@@ -2,6 +2,7 @@
 #include <string.h>
 #include <math.h>
 #include "../include/utils.h"
+#include "../include/vector.h"
 #include "../include/matrix.h"
 #include "../include/obj.h"
 #include "../include/scene.h"
@@ -61,7 +62,7 @@ void build_NormalMatrix(
 
     float det;
     det= m[0][0] *(m[1][1] * m[2][2] - m[1][2] * m[2][1])
-        -m[0][1] *(m[1][2] * m[2][0] - m[1][0] * m[2][2]) //sign    
+        -m[0][1] *(m[1][0] * m[2][2] - m[1][2] * m[2][0]) //sign    
         +m[0][2] *(m[1][0] * m[2][1] - m[1][1] * m[2][0]);
 
     //0 determinant 
@@ -73,25 +74,25 @@ void build_NormalMatrix(
     }
 
     det = 1.0f / det;
-    //Row 1 of Normal Matrix 
+    //R1
     norm_mat->m[0][0]= (m[1][1] * m[2][2] - m[1][2] * m[2][1])* det;
-    norm_mat->m[0][1]= (m[1][2] * m[2][0] - m[1][0] * m[2][2])* det;
+    norm_mat->m[0][1]= (m[1][2] * m[2][0] - m[1][0] * m[2][2])* det; //sign
     norm_mat->m[0][2]= (m[1][0] * m[2][1] - m[1][1] * m[2][0])* det;
     norm_mat->m[0][3]= 0;
 
-    //Row 2 of Normal Matrix 
-    norm_mat->m[1][0]= (m[0][2] * m[2][1] - m[0][1] * m[2][2])* det; 
+    //R2
+    norm_mat->m[1][0]= (m[0][2] * m[2][1] - m[0][1] * m[2][2])* det; //sign 
     norm_mat->m[1][1]= (m[0][0] * m[2][2] - m[0][2] * m[2][0])* det;
-    norm_mat->m[1][2]= (m[0][1] * m[2][0] - m[0][0] * m[2][1])* det; 
+    norm_mat->m[1][2]= (m[0][1] * m[2][0] - m[0][0] * m[2][1])* det; //sign
     norm_mat->m[1][3]= 0;
 
-    //Row 3 of Normal Matrix 
+    //R3
     norm_mat->m[2][0]= (m[0][1] * m[1][2] - m[0][2] * m[1][1])* det;
-    norm_mat->m[2][1]= (m[0][2] * m[1][0] - m[0][0] * m[1][2])* det; 
+    norm_mat->m[2][1]= (m[0][2] * m[1][0] - m[0][0] * m[1][2])* det; //sign
     norm_mat->m[2][2]= (m[0][0] * m[1][1] - m[0][1] * m[1][0])* det;
     norm_mat->m[2][3]= 0;
 
-    //Row 4 of Normal Matrix 
+    //R4 
     norm_mat->m[3][0]= 0;
     norm_mat->m[3][1]= 0;
     norm_mat->m[3][2]= 0;
@@ -107,29 +108,30 @@ void build_ViewLookAtMatrix(Scene* scene){
 
     mat4* view_mat= &cam->view;
     vec3 cam_pos= cam->position;
-    vec3 global= cam->global;
+    float pitch= cam->pitch,yaw= cam->yaw;
+
+    vec3 forward;
+
     float magn;
 
     //FORWARD,R3
-    view_mat->m[2][0]= cam->target.x - cam_pos.x; 
-    view_mat->m[2][1]= cam->target.y - cam_pos.y; 
-    view_mat->m[2][2]= cam->target.z - cam_pos.z;
+    view_mat->m[2][0]= sinf(yaw)*cosf(pitch);
+    view_mat->m[2][1]= sinf(pitch);
+    view_mat->m[2][2]= cosf(yaw)*cosf(pitch);
 
-    magn= sqrtf(view_mat->m[2][0]* view_mat->m[2][0] 
-             + view_mat->m[2][1]* view_mat->m[2][1] 
-             + view_mat->m[2][2]* view_mat->m[2][2]);
+    /*if (FABS(view_mat->m[2][0] - cam->global.x) < 0.001f && 
+        FABS(view_mat->m[2][1] - cam->global.y) < 0.001f && 
+        FABS(view_mat->m[2][2] - cam->global.z) < 0.001f){
 
-    if (magn> 0.001f){
-      magn= 1.0f/magn;
-      view_mat->m[2][0]*= magn;
-      view_mat->m[2][1]*= magn;
-      view_mat->m[2][2]*= magn;
-    }
+        vec3 cglobal= {0.0f,0.0f,-1.0f};
+        cam->global= cglobal;
+        printf("changed global\n");
+    }*/
 
     //RIGHT(TU*F),R1
-    view_mat->m[0][0]= global.y * view_mat->m[2][2] - global.z * view_mat->m[2][1];
-    view_mat->m[0][1]= -global.x * view_mat->m[2][2] + global.z * view_mat->m[2][0]; 
-    view_mat->m[0][2]= global.x * view_mat->m[2][1] - global.y * view_mat->m[2][0];
+    view_mat->m[0][0]= cam->global.y * view_mat->m[2][2] - cam->global.z * view_mat->m[2][1];
+    view_mat->m[0][1]= -cam->global.x * view_mat->m[2][2] + cam->global.z * view_mat->m[2][0]; 
+    view_mat->m[0][2]= cam->global.x * view_mat->m[2][1] - cam->global.y * view_mat->m[2][0];
 
     magn= sqrtf(view_mat->m[0][0]* view_mat->m[0][0] 
              + view_mat->m[0][1]* view_mat->m[0][1] 
@@ -165,7 +167,7 @@ void build_ViewLookAtMatrix(Scene* scene){
     view_mat->m[3][2]= 0;
     view_mat->m[3][3]= 1;
 
-    //printf("VIEWW\n");mat_print(view_mat);
+    printf("VIEWW\n");mat_print(view_mat);
     return;
 }
 

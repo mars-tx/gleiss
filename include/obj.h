@@ -36,9 +36,10 @@ typedef struct{
     mat4 projection;
 
     //For view matrix
-    vec3 target;
     vec3 position;
     vec3 global;
+
+    float pitch,yaw;
 
     //In radians
     float yFov;
