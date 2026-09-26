@@ -38,7 +38,6 @@ void rasterize_barycentricFlat(
     float det= (x13*y23 - x23*y13);
 
     //Backface cull check
-    //if (FABS(det) < 0.001f){ return; }
     if (det > 0.001f){ return; }
     printf("det %f\n",det);
 
@@ -49,9 +48,8 @@ void rasterize_barycentricFlat(
           r2= x13*det;
 
     //Color between 0-255
-
     float intensity= vec3Dot(shader->face_norm,shader->light_dir);
-    
+
     uint32_t flatColor= fragment_FlatShader(
             intensity,vertices[0].vertex_color,
             vertices[1].vertex_color,vertices[2].vertex_color);
@@ -133,7 +131,6 @@ void rasterize_barycentricGouraud(
     float det= (x13*y23 - x23*y13);
 
     //Backface cull check
-    //if (FABS(det) < 0.001f){ return; }
     if (det > 0.001f){ return; }
     printf("det %f\n",det);
 
@@ -148,22 +145,26 @@ void rasterize_barycentricGouraud(
     float i2= vec3Dot(vertices[1].norm,shader->light_dir);
     float i3= vec3Dot(vertices[2].norm,shader->light_dir);
 
+    vec_print(vertices[0].norm);
+    vec_print(vertices[1].norm);
+    vec_print(vertices[2].norm);
     printf("i123 %f %f %f\n",i1,i2,i3);
+
     //Color between 0-255
-    uint32_t vcolor1_r= vertices[0].vertex_color >> 24 & 0xFF;
-    uint32_t vcolor1_g= vertices[0].vertex_color >> 16 & 0xFF;
-    uint32_t vcolor1_b= vertices[0].vertex_color >> 8 & 0xFF;
-    uint32_t vcolor1_a= vertices[0].vertex_color & 0xFF;
+    float vcolor1_r= vertices[0].vertex_color >> 24 & 0xFF;
+    float vcolor1_g= vertices[0].vertex_color >> 16 & 0xFF;
+    float vcolor1_b= vertices[0].vertex_color >> 8 & 0xFF;
+    float vcolor1_a= vertices[0].vertex_color & 0xFF;
 
-    uint32_t vcolor2_r= vertices[1].vertex_color >> 24 & 0xFF;
-    uint32_t vcolor2_g= vertices[1].vertex_color >> 16 & 0xFF;
-    uint32_t vcolor2_b= vertices[1].vertex_color >> 8 & 0xFF;
-    uint32_t vcolor2_a= vertices[1].vertex_color & 0xFF;
+    float vcolor2_r= vertices[1].vertex_color >> 24 & 0xFF;
+    float vcolor2_g= vertices[1].vertex_color >> 16 & 0xFF;
+    float vcolor2_b= vertices[1].vertex_color >> 8 & 0xFF;
+    float vcolor2_a= vertices[1].vertex_color & 0xFF;
 
-    uint32_t vcolor3_r= vertices[2].vertex_color >> 24 & 0xFF;
-    uint32_t vcolor3_g= vertices[2].vertex_color >> 16 & 0xFF;
-    uint32_t vcolor3_b= vertices[2].vertex_color >> 8 & 0xFF;
-    uint32_t vcolor3_a= vertices[2].vertex_color & 0xFF;
+    float vcolor3_r= vertices[2].vertex_color >> 24 & 0xFF;
+    float vcolor3_g= vertices[2].vertex_color >> 16 & 0xFF;
+    float vcolor3_b= vertices[2].vertex_color >> 8 & 0xFF;
+    float vcolor3_a= vertices[2].vertex_color & 0xFF;
 
     //Boundaries for rasterizer
     int xmax,xmin,ymax,ymin;
