@@ -27,7 +27,8 @@ typedef struct{
     mat4 model;
     vec3 position;
     vec3 scale;
-    vec3 rot;
+    //Around XYZ axes
+    float pitch,yaw,roll;
 
 }Object;
 

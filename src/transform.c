@@ -19,9 +19,9 @@ void build_ModelMatrix(Object* obj) {
     vec3 scale= obj->scale;
     
     //Raw angles
-    float ax= obj->rot.x;
-    float ay= obj->rot.y;
-    float az= obj->rot.z;
+    float ax= obj->pitch;
+    float ay= obj->yaw;
+    float az= obj->roll;
     
     float cx= cosf(ax); float sx= sinf(ax);
     float cy= cosf(ay); float sy= sinf(ay);
@@ -52,6 +52,7 @@ void build_ModelMatrix(Object* obj) {
     model_mat->m[3][3]= 1.0f;
 
     //printf("MODELL\n");mat_print(model_mat);
+    return;
 }
 
 void build_NormalMatrix(
@@ -110,8 +111,6 @@ void build_ViewLookAtMatrix(Scene* scene){
     vec3 cam_pos= cam->position;
     float pitch= cam->pitch,yaw= cam->yaw;
 
-    vec3 forward;
-
     float magn;
 
     //FORWARD,R3
@@ -167,7 +166,7 @@ void build_ViewLookAtMatrix(Scene* scene){
     view_mat->m[3][2]= 0;
     view_mat->m[3][3]= 1;
 
-    printf("VIEWW\n");mat_print(view_mat);
+    //printf("VIEWW\n");mat_print(view_mat);
     return;
 }
 

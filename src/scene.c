@@ -4,31 +4,9 @@
 #include "../include/vector.h"
 #include "../include/scene.h"
 
-static void set_MeshFacesNormal(Mesh* in_mesh) {
-    int num= in_mesh->face_count;
-    VertexInput* vertices= in_mesh->vertices;
-    Face* faces= in_mesh->faces;
+static void set_MeshFacesNormal(Mesh* in_mesh);
 
-    for (int i= 0; i< num; i++) {
-        vec3 v1= vertices[faces[i].vertices_index[0]].pos;
-        vec3 v2= vertices[faces[i].vertices_index[1]].pos;
-        vec3 v3= vertices[faces[i].vertices_index[2]].pos;
-
-        vec3 e1= vec3Sub(v2, v1);
-        vec3 e2= vec3Sub(v3, v1);
-
-        faces[i].face_norm= vec3Normalize(vec3Cross(e1, e2));
-    }
-}
-
-static void set_MeshVerticesNormal(Mesh* in_mesh){
-    int num= in_mesh->vertex_count;
-    VertexInput* vertices= in_mesh->vertices;
-    for (int i= 0;i< num;i++){
-
-        vertices[i].norm= vec3Normalize(vertices[i].pos);
-    }
-}
+static void set_MeshVerticesNormal(Mesh* in_mesh);
 
 Scene* load_Scene(const char* filename){
 
@@ -59,7 +37,7 @@ Scene* load_Scene(const char* filename){
     scene->objects= malloc(scene->object_count * sizeof(Object));
 
     //Load Meshes by Index
-    for (int m= 0; m< scene->mesh_count; m++) {
+    for (int m= 0; m < scene->mesh_count; m++) {
 
         int v_count, f_count;
         read_values= fscanf(file, "%d %d", &v_count, &f_count);
@@ -132,7 +110,9 @@ Scene* load_Scene(const char* filename){
         scene->objects[o].mesh_data= &scene->meshes[mesh_idx];
 
         scene->objects[o].position= (vec3){px, py, pz};
-        scene->objects[o].rot= (vec3){rx, ry, rz};
+        scene->objects[o].pitch= rx;
+        scene->objects[o].yaw= ry;
+        scene->objects[o].roll= rz;
         scene->objects[o].scale= (vec3){sx, sy, sz};
 
         //Color input
@@ -176,7 +156,7 @@ void free_Scene(Scene* scene){
 
     //Free shared meshes
     if (scene->meshes) {
-        for (int i= 0; i< scene->mesh_count; i++) {
+        for (int i= 0; i < scene->mesh_count; i++) {
             if (scene->meshes[i].vertices) {
                 free(scene->meshes[i].vertices);
             }
@@ -188,7 +168,7 @@ void free_Scene(Scene* scene){
     }
     //Free objects and their colors
     if (scene->objects) {
-        for (int i= 0; i< scene->object_count; i++) {
+        for (int i= 0; i < scene->object_count; i++) {
             if (scene->objects[i].vertex_colors) {
                 free(scene->objects[i].vertex_colors);
             }
@@ -197,3 +177,44 @@ void free_Scene(Scene* scene){
     }
     free(scene);
 }
+
+static void set_MeshFacesNormal(Mesh* in_mesh){
+    int fnum= in_mesh->face_count;
+    VertexInput* vertices= in_mesh->vertices;
+    Face* faces= in_mesh->faces;
+
+    for (int i= 0; i < fnum; i++) {
+        vec3 v1= vertices[faces[i].vertices_index[0]].pos;
+
+        vec3 e1= vec3Sub(vertices[faces[i].vertices_index[1]].pos,v1);
+        vec3 e2= vec3Sub(vertices[faces[i].vertices_index[2]].pos,v1);
+
+        faces[i].face_norm= vec3Normalize(vec3Cross(e1, e2));
+        vec_print(faces[i].face_norm);
+    }
+}
+
+static void set_MeshVerticesNormal(Mesh* in_mesh){
+    int vnum= in_mesh->vertex_count,
+        fnum= in_mesh->face_count,fvnum;
+    VertexInput* vertices= in_mesh->vertices;
+    Face* faces= in_mesh->faces;
+    vec3 res_norm;
+    printf("v\n");
+    for (int i= 0;i < vnum;i++){
+        fvnum= 0;
+        res_norm= (vec3){0.0f,0.0f,0.0f};
+        for (int j= 0;j < fnum;j++){
+            for (int k= 0;k < 3;k++){
+                if (i == faces[j].vertices_index[k]){
+                    fvnum+= 1;
+                    res_norm= vec3Add(res_norm,faces[j].face_norm);
+                    break;
+                }
+            }
+        }
+        vertices[i].norm= vec3Normalize(res_norm);
+        vec_print(vertices[i].norm);
+    }
+}
+
